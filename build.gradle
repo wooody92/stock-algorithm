@@ -26,12 +26,13 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.3.2.RELEASE'
 }
 
 test {
-	useJUnitPlatform()
+	useJUnitPlatform {
+		includeEngines 'junit-vintage'
+		// excludeEngines 'junit-jupiter'
+	}
 }
