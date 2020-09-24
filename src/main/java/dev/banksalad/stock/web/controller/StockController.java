@@ -1,6 +1,6 @@
 package dev.banksalad.stock.web.controller;
 
-import dev.banksalad.stock.service.SampleService;
+import dev.banksalad.stock.service.IexCloudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/stock")
 public class StockController {
 
-    private final SampleService sampleService;
+    private final IexCloudService iexCloudService;
 
     @GetMapping("/{symbol}")
     public ResponseEntity viewStockChart(@PathVariable String symbol) {
-        return new ResponseEntity(sampleService.getData(symbol), HttpStatus.OK);
+        return new ResponseEntity(iexCloudService.getData(symbol), HttpStatus.OK);
     }
 }
