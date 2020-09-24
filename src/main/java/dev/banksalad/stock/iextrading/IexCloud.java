@@ -2,10 +2,8 @@ package dev.banksalad.stock.iextrading;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class IexCloud {
 
     private String date;
@@ -19,5 +17,12 @@ public class IexCloud {
         this.date = date;
         this.close = close;
         this.volume = volume;
+    }
+
+    @Override
+    public String toString() {
+        return "{\"date\":" + "\"" +date + "\""
+            + ",\"volume\":" + volume
+            + ",\"price\":" + close + "}";
     }
 }
