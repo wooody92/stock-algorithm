@@ -10,10 +10,11 @@ import static dev.banksalad.stock.iextrading.IexCloudEnum.*;
 
 @Service
 @RequiredArgsConstructor
-public class IexCloudService {
+public class IexCloudService implements OpenApiService{
 
     private final WebClient.Builder builder;
 
+    @Override
     public List<IexCloud> getData(String symbol) {
         WebClient webClient = builder.baseUrl(BASE_URL.getValue()).build();
         List<IexCloud> iexCloudList = webClient.get()
