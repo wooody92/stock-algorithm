@@ -42,4 +42,17 @@ public class StockInformationDto {
             .volume(iexCloud.getVolume())
             .build();
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+            "\"symbol\":" + symbol +
+            ",\"date\":" + date +
+            ",\"open\":" + open +
+            ",\"close\":" + close +
+            ",\"high\":" + high +
+            ",\"low\":" + low +
+            ",\"volume\":" + volume +
+            '}';
+    }
 }

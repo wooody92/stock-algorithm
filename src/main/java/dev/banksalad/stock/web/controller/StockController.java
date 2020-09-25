@@ -1,6 +1,8 @@
 package dev.banksalad.stock.web.controller;
 
 import dev.banksalad.stock.service.StockService;
+import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ public class StockController {
     private final StockService stockService;
 
     @GetMapping("/{symbol}")
-    public ResponseEntity viewStockChart(@PathVariable String symbol) {
+    public ResponseEntity<List<StockInformationDto>> viewStockChart(@PathVariable String symbol) {
         return new ResponseEntity(stockService.getStockInformation(symbol), HttpStatus.OK);
     }
 }

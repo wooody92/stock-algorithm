@@ -6,6 +6,9 @@ import static org.junit.Assert.*;
 
 import dev.banksalad.stock.iextrading.IexCloud;
 import dev.banksalad.stock.service.IexCloudService;
+import dev.banksalad.stock.service.StockService;
+import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -32,28 +35,42 @@ public class StockControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    IexCloudService iexCloudService;
+    StockService stockService;
 
-    private List<IexCloud> iexClouds = new ArrayList<>();
+    private List<StockInformationDto> stockInformationDtos = new ArrayList<>();
+    final String stockSymbol = "AAPL";
 
     @Before
     public void setUp() throws Exception {
-        IexCloud iexCloud1 = new IexCloud("2020-09-21", 114.84, 204493929l);
-        IexCloud iexCloud2 = new IexCloud("2020-09-22", 112.87, 189436014l);
-        iexClouds.add(iexCloud1);
-        iexClouds.add(iexCloud2);
+        IexCloud iexCloud1 = IexCloud.builder()
+            .date(LocalDate.parse("2020-09-23"))
+            .open(111.62)
+            .close(107.12)
+            .high(112.11)
+            .low(106.77)
+            .volume(150718671L)
+            .build();
+        IexCloud iexCloud2 = IexCloud.builder()
+            .date(LocalDate.parse("2020-09-24"))
+            .open(105.17)
+            .close(108.22)
+            .high(110.25)
+            .low(105.0)
+            .volume(167743349L)
+            .build();
+
+        stockInformationDtos.add(StockInformationDto.of(stockSymbol, iexCloud1));
+        stockInformationDtos.add(StockInformationDto.of(stockSymbol, iexCloud2));
     }
 
     @Test
     @DisplayName("주식 심볼을 바탕으로 해당 주식의 지난 데이터들을 조회하는 테스트")
     public void viewStockChartTest() throws Exception {
-        final String stockSymbol = "AAPL";
-
-        given(iexCloudService.getData(stockSymbol)).willReturn(iexClouds);
+        given(stockService.getStockInformation(stockSymbol)).willReturn(stockInformationDtos);
 
         mockMvc.perform(get("/stock/" + stockSymbol))
             .andExpect(status().isOk())
             .andDo(print())
-            .andExpect(content().json(iexClouds.toString()));
+            .andExpect(content().json(stockInformationDtos.toString()));
     }
 }
