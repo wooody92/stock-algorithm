@@ -34,8 +34,7 @@ public class IexCloudService implements OpenApiService{
         return iexCloudList;
     }
 
-    public List<StockInformationDto> getStockData(String symbol) {
-        List<IexCloud> iexClouds = requestData(symbol);
+    public List<StockInformationDto> getStockData(String symbol, List<IexCloud> iexClouds) {
         return iexClouds.stream()
             .map(iexCloud -> StockInformationDto.of(symbol, iexCloud))
             .collect(Collectors.toList());

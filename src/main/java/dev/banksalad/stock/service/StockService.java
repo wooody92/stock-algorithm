@@ -1,5 +1,6 @@
 package dev.banksalad.stock.service;
 
+import dev.banksalad.stock.iextrading.IexCloud;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.util.List;
@@ -15,6 +16,7 @@ public class StockService {
     private final StockRepository stockRepository;
 
     public List<StockInformationDto> getStockInformation(String symbol) {
-        return iexCloudService.getStockData(symbol);
+        List<IexCloud> iexClouds = iexCloudService.requestData(symbol);
+        return iexCloudService.getStockData(symbol, iexClouds);
     }
 }

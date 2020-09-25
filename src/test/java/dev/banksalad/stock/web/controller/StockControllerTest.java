@@ -38,7 +38,7 @@ public class StockControllerTest {
     StockService stockService;
 
     private List<StockInformationDto> stockInformationDtos = new ArrayList<>();
-    final String stockSymbol = "AAPL";
+    private final String stockSymbol = "AAPL";
 
     @Before
     public void setUp() throws Exception {
