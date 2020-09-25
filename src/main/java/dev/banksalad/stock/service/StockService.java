@@ -1,11 +1,12 @@
 package dev.banksalad.stock.service;
 
-import dev.banksalad.stock.domain.stock.Stock;
+import dev.banksalad.stock.iextrading.IexCloud;
 import dev.banksalad.stock.repository.StockRepository;
-import dev.banksalad.stock.web.dto.request.CreateStock;
+import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,14 +16,10 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    public void getIexCloudServiceData() {
-        System.out.println(iexCloudService.getData("aapl"));
-    }
-
-    @Transactional
-    public void create() {
-        Stock stock = CreateStock.toEntity();
-        System.out.println(stock);
-        stockRepository.save(stock);
+    public List<StockInformationDto> getStockInformation(String symbol) {
+        List<IexCloud> iexClouds = iexCloudService.getData(symbol);
+        return iexClouds.stream()
+            .map(iexCloud -> StockInformationDto.of(symbol, iexCloud))
+            .collect(Collectors.toList());
     }
 }
