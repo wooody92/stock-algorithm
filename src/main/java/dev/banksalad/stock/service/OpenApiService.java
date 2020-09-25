@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface OpenApiService {
 
-    <T> List<T> getData(String symbol);
+    <T> List<T> requestData(String symbol);
 }

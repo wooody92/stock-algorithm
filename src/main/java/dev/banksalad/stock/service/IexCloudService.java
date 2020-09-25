@@ -1,7 +1,9 @@
 package dev.banksalad.stock.service;
 
 import dev.banksalad.stock.iextrading.IexCloud;
+import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,7 +17,7 @@ public class IexCloudService implements OpenApiService{
     private final WebClient.Builder builder;
 
     @Override
-    public List<IexCloud> getData(String symbol) {
+    public List<IexCloud> requestData(String symbol) {
         WebClient webClient = builder.baseUrl(BASE_URL.getValue()).build();
         List<IexCloud> iexCloudList = webClient.get()
             .uri(uriBuilder -> uriBuilder
@@ -30,5 +32,12 @@ public class IexCloudService implements OpenApiService{
             .collectList()
             .block();
         return iexCloudList;
+    }
+
+    public List<StockInformationDto> getStockData(String symbol) {
+        List<IexCloud> iexClouds = requestData(symbol);
+        return iexClouds.stream()
+            .map(iexCloud -> StockInformationDto.of(symbol, iexCloud))
+            .collect(Collectors.toList());
     }
 }
