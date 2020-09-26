@@ -1,7 +1,7 @@
 package dev.banksalad.stock.domain.stock;
 
 import dev.banksalad.stock.domain.profit.Profit;
-import dev.banksalad.stock.web.dto.request.CreateProfit;
+import dev.banksalad.stock.global.exception.NullProfitException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +52,6 @@ public class Stock {
                 return profit;
             }
         }
-        return new Profit();
+        throw new NullProfitException();
     }
 }
