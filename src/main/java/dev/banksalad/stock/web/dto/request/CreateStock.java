@@ -27,10 +27,9 @@ public class CreateStock {
         this.sellDate = sellDate;
     }
 
-    public static Stock toEntity() {
+    public static Stock toEntity(String symbol) {
         return Stock.builder()
-            .name("nameTest")
-            .profit(1234d)
+            .name(symbol)
             .build();
     }
 }

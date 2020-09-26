@@ -1,12 +1,14 @@
 package dev.banksalad.stock.service;
 
 import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.utils.StockAlgorithm;
 import dev.banksalad.stock.web.dto.PriceAndDate;
 import dev.banksalad.stock.web.dto.request.CreateProfit;
+import dev.banksalad.stock.web.dto.request.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,9 +35,12 @@ public class StockService {
         List<Double> price = parsePrice(stockInformation);
         List<LocalDate> dates = parseDate(stockInformation);
 
+        Stock stock = CreateStock.toEntity(symbol);
         CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
-        Profit profit = CreateProfit.toEntity(createProfit);
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        stock.addProfit(profit);
 
+        stockRepository.save(stock);
         System.out.println(profit);
     }
 

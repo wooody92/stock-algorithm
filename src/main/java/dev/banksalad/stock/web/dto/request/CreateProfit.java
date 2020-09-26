@@ -1,6 +1,7 @@
 package dev.banksalad.stock.web.dto.request;
 
 import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Stock;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,12 +26,13 @@ public class CreateProfit {
         this.saleDate = saleDate;
     }
 
-    public static Profit toEntity(CreateProfit createProfit) {
+    public static Profit toEntity(CreateProfit createProfit, Stock stock) {
         return Profit.builder()
-            .profit(createProfit.getProfit())
             .date(createProfit.getDate())
+            .profit(createProfit.getProfit())
             .purchaseDate(createProfit.getPurchaseDate())
             .saleDate(createProfit.getSaleDate())
+            .stock(stock)
             .build();
     }
 }
