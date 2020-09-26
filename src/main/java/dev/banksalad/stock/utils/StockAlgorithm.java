@@ -1,6 +1,7 @@
 package dev.banksalad.stock.utils;
 
 import dev.banksalad.stock.web.dto.request.CreateProfit;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,11 +29,19 @@ public class StockAlgorithm {
                 break;
             }
         }
+        maxProfit = getSecondDigit(maxProfit);
+
         return CreateProfit.builder()
             .profit(maxProfit)
             .date(dates.get(dates.size() - 1))
             .purchaseDate(dates.get(purchaseIndex))
             .saleDate(dates.get(saleIndex))
             .build();
+    }
+
+    private static Double getSecondDigit(Double digit) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        String format = decimalFormat.format(digit);
+        return Double.parseDouble(format);
     }
 }
