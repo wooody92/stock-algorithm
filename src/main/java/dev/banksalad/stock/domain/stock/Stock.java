@@ -40,13 +40,11 @@ public class Stock {
         profits.add(profit);
     }
 
-    public boolean isExistDate() {
-        LocalDate date = LocalDate.now().minusDays(1);
+    public boolean isExistDate(LocalDate date) {
         return profits.stream().anyMatch(profit -> profit.isEqualsDate(date));
     }
 
-    public Profit getProfit() {
-        LocalDate date = LocalDate.now().minusDays(1);
+    public Profit getProfit(LocalDate date) {
         for (Profit profit : profits) {
             if (profit.isEqualsDate(date)) {
                 return profit;
