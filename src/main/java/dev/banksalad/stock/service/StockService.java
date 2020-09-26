@@ -30,34 +30,26 @@ public class StockService {
 
     public void getMaxProfitDate(String symbol) {
         List<StockInformationDto> stockInformation = getStockInformation(symbol);
-        List<PriceAndDate> priceAndDates = parsePriceAndDate(stockInformation);
+        List<Double> price = parsePrice(stockInformation);
+        List<LocalDate> dates = parseDate(stockInformation);
 
-        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(priceAndDates);
+        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
         Profit profit = CreateProfit.toEntity(createProfit);
 
         System.out.println(profit);
     }
 
-    private List<PriceAndDate> parsePriceAndDate(List<StockInformationDto> stockInformation) {
+    private List<Double> parsePrice(List<StockInformationDto> stockInformation) {
         return stockInformation.stream()
-            .map(stockInformationDto -> PriceAndDate
-                .of(stockInformationDto.getClose(), stockInformationDto.getDate()))
+            .map(data -> new Double(data.getClose()))
             .collect(Collectors.toList());
     }
 
-//    private List<Double> parsePrice(List<StockInformationDto> stockInformation) {
-//        List<Double> price = new ArrayList<>();
-//        for (StockInformationDto data : stockInformation) {
-//            price.add(data.getClose());
-//        }
-//        return price;
-//    }
-//
-//    private List<LocalDate> parseDate(List<StockInformationDto> stockInformation) {
-//        List<LocalDate> dates = new ArrayList<>();
-//        for (StockInformationDto data : stockInformation) {
-//            dates.add(data.getDate());
-//        }
-//        return dates;
-//    }
+    private List<LocalDate> parseDate(List<StockInformationDto> stockInformation) {
+        List<LocalDate> dates = new ArrayList<>();
+        for (StockInformationDto data : stockInformation) {
+            dates.add(data.getDate());
+        }
+        return dates;
+    }
 }
