@@ -1,4 +1,4 @@
-package dev.banksalad.stock.iextrading;
+package dev.banksalad.stock.openApi.iextrading;
 
 import lombok.Getter;
 

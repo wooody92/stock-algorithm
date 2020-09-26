@@ -1,18 +1,19 @@
-package dev.banksalad.stock.service;
+package dev.banksalad.stock.openApi.iextrading;
 
-import dev.banksalad.stock.iextrading.IexCloud;
+import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import static dev.banksalad.stock.iextrading.IexCloudEnum.*;
+import static dev.banksalad.stock.openApi.iextrading.IexCloudEnum.*;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class IexCloudProvider implements OpenApiService{
+public class IexCloudProvider implements OpenApiProvider {
 
     private final WebClient.Builder builder;
 

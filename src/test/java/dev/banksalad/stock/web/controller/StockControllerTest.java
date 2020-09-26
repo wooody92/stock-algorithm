@@ -2,7 +2,7 @@ package dev.banksalad.stock.web.controller;
 
 import static org.hamcrest.Matchers.is;
 
-import dev.banksalad.stock.iextrading.IexCloud;
+import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;

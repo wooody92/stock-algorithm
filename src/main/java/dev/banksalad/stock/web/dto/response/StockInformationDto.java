@@ -1,6 +1,6 @@
 package dev.banksalad.stock.web.dto.response;
 
-import dev.banksalad.stock.iextrading.IexCloud;
+import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;

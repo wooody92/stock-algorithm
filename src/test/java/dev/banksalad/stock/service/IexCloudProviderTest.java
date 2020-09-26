@@ -1,6 +1,7 @@
 package dev.banksalad.stock.service;
 
-import dev.banksalad.stock.iextrading.IexCloud;
+import dev.banksalad.stock.openApi.iextrading.IexCloud;
+import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
