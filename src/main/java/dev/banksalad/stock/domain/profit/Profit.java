@@ -47,4 +47,8 @@ public class Profit {
         this.saleDate = saleDate;
         this.stock = stock;
     }
+
+    public boolean isEqualsDate(LocalDate date) {
+        return date.equals(this.date);
+    }
 }
