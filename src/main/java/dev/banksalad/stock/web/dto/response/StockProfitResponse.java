@@ -30,8 +30,7 @@ public class StockProfitResponse {
         this.saleDate = saleDate;
     }
 
-    public static StockProfitResponse of(Stock stock) {
-        Profit profit = stock.getProfit();
+    public static StockProfitResponse of(Stock stock, Profit profit) {
         return StockProfitResponse.builder()
             .symbol(stock.getSymbol())
             .date(profit.getDate())

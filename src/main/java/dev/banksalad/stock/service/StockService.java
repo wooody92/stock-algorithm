@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StockService {
@@ -30,11 +32,13 @@ public class StockService {
     @Transactional
     public StockProfitResponse getMaxProfitDate(String symbol) {
         Stock stock = stockRepository.findBySymbol(symbol);
+        LocalDate date = getLatestRecordDate(symbol);
         if (Objects.isNull(stock)) {
             stock = CreateStock.toEntity(symbol);
         }
-        if (stock.isExistDate()) {
-            return StockProfitResponse.of(stock);
+        if (stock.isExistDate(date)) {
+            Profit profit = stock.getProfit(date);
+            return StockProfitResponse.of(stock, profit);
         }
 
         List<StockInformationDto> stockInformation = getStockInformation(symbol);
@@ -45,13 +49,16 @@ public class StockService {
         Profit profit = CreateProfit.toEntity(createProfit, stock);
         stock.addProfit(profit);
         stockRepository.save(stock);
-
-        return StockProfitResponse.of(stock);
+        return StockProfitResponse.of(stock, profit);
     }
 
     public List<StockInformationDto> getStockInformation(String symbol) {
         List<IexCloud> iexClouds = iexCloudProvider.requestData(symbol);
         return iexCloudProvider.getStockData(symbol, iexClouds);
+    }
+
+    public LocalDate getLatestRecordDate(String symbol) {
+        return iexCloudProvider.getLatestRecordDate(symbol);
     }
 
     private List<Double> parsePrice(List<StockInformationDto> stockInformation) {
