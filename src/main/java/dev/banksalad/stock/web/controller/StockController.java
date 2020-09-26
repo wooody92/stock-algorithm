@@ -2,6 +2,7 @@ package dev.banksalad.stock.web.controller;
 
 import dev.banksalad.stock.service.StockService;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,5 +22,10 @@ public class StockController {
     @GetMapping("/{symbol}")
     public ResponseEntity<List<StockInformationDto>> viewStockChart(@PathVariable String symbol) {
         return new ResponseEntity(stockService.getStockInformation(symbol), HttpStatus.OK);
+    }
+
+    @GetMapping("/{symbol}/profit")
+    public ResponseEntity<StockProfitResponse> viewMaxProfit(@PathVariable String symbol) {
+        return new ResponseEntity<>(stockService.getMaxProfitDate(symbol), HttpStatus.OK);
     }
 }
