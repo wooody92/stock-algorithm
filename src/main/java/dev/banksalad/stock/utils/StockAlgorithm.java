@@ -1,6 +1,5 @@
 package dev.banksalad.stock.utils;
 
-import dev.banksalad.stock.web.dto.PriceAndDate;
 import dev.banksalad.stock.web.dto.request.CreateProfit;
 import java.time.LocalDate;
 import java.util.List;
