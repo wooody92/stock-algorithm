@@ -1,6 +1,7 @@
 package dev.banksalad.stock.domain.stock;
 
 import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.web.dto.request.CreateProfit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,21 @@ public class Stock {
     }
 
     public void addProfit(Profit profit) {
-        this.profits.add(profit);
+        profits.add(profit);
+    }
+
+    public boolean isExistDate() {
+        LocalDate date = LocalDate.now().minusDays(1);
+        return profits.stream().anyMatch(profit -> profit.isEqualsDate(date));
+    }
+
+    public Profit getProfit() {
+        LocalDate date = LocalDate.now().minusDays(1);
+        for (Profit profit : profits) {
+            if (profit.isEqualsDate(date)) {
+                return profit;
+            }
+        }
+        return new Profit();
     }
 }
