@@ -25,14 +25,14 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String symbol;
 
     @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Profit> profits = new ArrayList<>();
 
     @Builder
-    public Stock(String name) {
-        this.name = name;
+    public Stock(String symbol) {
+        this.symbol = symbol;
     }
 
     public void addProfit(Profit profit) {
