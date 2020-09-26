@@ -1,4 +1,4 @@
-package dev.banksalad.stock.web.dto.request;
+package dev.banksalad.stock.web.dto.create;
 
 import dev.banksalad.stock.domain.stock.Stock;
 import lombok.AccessLevel;

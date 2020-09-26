@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.utility;
 
-import dev.banksalad.stock.web.dto.request.CreateProfit;
+import dev.banksalad.stock.web.dto.create.CreateProfit;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
