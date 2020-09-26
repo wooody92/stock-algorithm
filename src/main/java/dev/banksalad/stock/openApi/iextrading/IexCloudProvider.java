@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,6 +23,9 @@ public class IexCloudProvider implements OpenApiProvider {
 
     private final WebClient.Builder builder;
 
+    @Value("${IEX_CLOUD_PUBLIC_KEY}")
+    private String IEX_CLOUD_PUBLIC_KEY;
+
     @Override
     public List<IexCloud> requestData(String symbol) {
         WebClient webClient = builder.baseUrl(BASE_URL.getValue()).build();
@@ -31,7 +35,7 @@ public class IexCloudProvider implements OpenApiProvider {
                 .path(symbol)
                 .path(PATH_CHART.getValue())
                 .path(PATH_MONTH.getValue())
-                .queryParam(TOKEN.getValue(), PUBLIC_KEY.getValue())
+                .queryParam(TOKEN.getValue(), IEX_CLOUD_PUBLIC_KEY)
                 .build())
             .retrieve()
             .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new InvalidSymbolException()))
@@ -60,7 +64,7 @@ public class IexCloudProvider implements OpenApiProvider {
                 .path(PATH_CHART.getValue())
                 .path(PATH_DAYS.getValue())
                 .queryParam(SORT.getValue(), DESC.getValue())
-                .queryParam(TOKEN.getValue(), PUBLIC_KEY.getValue())
+                .queryParam(TOKEN.getValue(), IEX_CLOUD_PUBLIC_KEY)
                 .build())
             .retrieve()
             .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new InvalidSymbolException()))

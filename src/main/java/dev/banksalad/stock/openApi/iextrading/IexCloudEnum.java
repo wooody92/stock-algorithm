@@ -11,8 +11,7 @@ public enum IexCloudEnum {
     PATH_DAYS("/5d"),
     SORT("sort"),
     DESC("desc"),
-    TOKEN("token"),
-    PUBLIC_KEY("Tpk_14ad95bb91954d929f4d657bbcb51d58");
+    TOKEN("token");
 
     private String value;
 
