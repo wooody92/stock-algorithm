@@ -21,11 +21,13 @@ public class StockController {
 
     @GetMapping("/{symbol}")
     public ResponseEntity<List<StockInformationDto>> viewStockChart(@PathVariable String symbol) {
-        return new ResponseEntity(stockService.getStockInformation(symbol), HttpStatus.OK);
+        return new ResponseEntity(stockService.getStockInformation(symbol.toUpperCase()),
+            HttpStatus.OK);
     }
 
     @GetMapping("/{symbol}/profit")
     public ResponseEntity<StockProfitResponse> viewMaxProfit(@PathVariable String symbol) {
-        return new ResponseEntity<>(stockService.getMaxProfitDate(symbol), HttpStatus.OK);
+        return new ResponseEntity<>(stockService.getMaxProfitDate(symbol.toUpperCase()),
+            HttpStatus.OK);
     }
 }
