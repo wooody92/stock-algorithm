@@ -5,7 +5,7 @@ import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
 import dev.banksalad.stock.repository.StockRepository;
-import dev.banksalad.stock.utils.StockAlgorithm;
+import dev.banksalad.stock.global.utility.StockAlgorithm;
 import dev.banksalad.stock.web.dto.request.CreateProfit;
 import dev.banksalad.stock.web.dto.request.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;

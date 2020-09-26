@@ -1,4 +1,4 @@
-package dev.banksalad.stock.utils;
+package dev.banksalad.stock.global.utility;
 
 import dev.banksalad.stock.web.dto.request.CreateProfit;
 import java.text.DecimalFormat;
