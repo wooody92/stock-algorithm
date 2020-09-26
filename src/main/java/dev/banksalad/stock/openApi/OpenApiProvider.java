@@ -1,8 +1,8 @@
-package dev.banksalad.stock.service;
+package dev.banksalad.stock.openApi;
 
 import java.util.List;
 
-public interface OpenApiService {
+public interface OpenApiProvider {
 
     <T> List<T> requestData(String symbol);
 }
