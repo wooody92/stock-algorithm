@@ -1,10 +1,15 @@
 package dev.banksalad.stock.domain.stock;
 
+import dev.banksalad.stock.domain.profit.Profit;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,21 +27,15 @@ public class Stock {
 
     private String name;
 
-    private Double profit;
-
-    private LocalDate date;
-
-    private LocalDate buyDate;
-
-    private LocalDate sellDate;
+    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Profit> profits = new ArrayList<>();
 
     @Builder
-    public Stock(String name, Double profit, LocalDate date, LocalDate buyDate,
-        LocalDate sellDate) {
+    public Stock(String name) {
         this.name = name;
-        this.profit = profit;
-        this.date = date;
-        this.buyDate = buyDate;
-        this.sellDate = sellDate;
+    }
+
+    public void addProfit(Profit profit) {
+        this.profits.add(profit);
     }
 }
