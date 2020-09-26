@@ -1,14 +1,18 @@
 package dev.banksalad.stock.openApi.iextrading;
 
+import dev.banksalad.stock.global.error.exception.EmptyStockException;
+import dev.banksalad.stock.global.error.exception.IexCloudException;
+import dev.banksalad.stock.global.error.exception.InvalidSymbolException;
 import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import static dev.banksalad.stock.openApi.iextrading.IexCloudEnum.*;
 
@@ -30,9 +34,14 @@ public class IexCloudProvider implements OpenApiProvider {
                 .queryParam(TOKEN.getValue(), PUBLIC_KEY.getValue())
                 .build())
             .retrieve()
+            .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new InvalidSymbolException()))
+            .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new IexCloudException()))
             .bodyToFlux(IexCloud.class)
             .collectList()
             .block();
+        if (iexCloudList.isEmpty()) {
+            throw new EmptyStockException();
+        }
         return iexCloudList;
     }
 
@@ -54,9 +63,14 @@ public class IexCloudProvider implements OpenApiProvider {
                 .queryParam(TOKEN.getValue(), PUBLIC_KEY.getValue())
                 .build())
             .retrieve()
+            .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new InvalidSymbolException()))
+            .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new IexCloudException()))
             .bodyToFlux(IexCloud.class)
             .collectList()
             .block();
+        if (iexCloudList.isEmpty()) {
+            throw new EmptyStockException();
+        }
         return iexCloudList.get(0).getDate();
     }
 
