@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StockService {
 
-    private final IexCloudService iexCloudService;
+    private final IexCloudProvider iexCloudProvider;
 
     private final StockRepository stockRepository;
 
     public List<StockInformationDto> getStockInformation(String symbol) {
-        List<IexCloud> iexClouds = iexCloudService.requestData(symbol);
-        return iexCloudService.getStockData(symbol, iexClouds);
+        List<IexCloud> iexClouds = iexCloudProvider.requestData(symbol);
+        return iexCloudProvider.getStockData(symbol, iexClouds);
     }
 
     public void getMaxProfitDate(String symbol) {

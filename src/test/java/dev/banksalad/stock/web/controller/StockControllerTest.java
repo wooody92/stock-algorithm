@@ -1,11 +1,8 @@
 package dev.banksalad.stock.web.controller;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
 
 import dev.banksalad.stock.iextrading.IexCloud;
-import dev.banksalad.stock.service.IexCloudService;
 import dev.banksalad.stock.service.StockService;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;

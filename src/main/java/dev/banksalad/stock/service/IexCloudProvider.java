@@ -12,7 +12,7 @@ import static dev.banksalad.stock.iextrading.IexCloudEnum.*;
 
 @Service
 @RequiredArgsConstructor
-public class IexCloudService implements OpenApiService{
+public class IexCloudProvider implements OpenApiService{
 
     private final WebClient.Builder builder;
 

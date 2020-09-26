@@ -1,17 +1,13 @@
 package dev.banksalad.stock.service;
 
-import static org.junit.Assert.*;
-
 import dev.banksalad.stock.iextrading.IexCloud;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,11 +17,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IexCloudService.class)
-public class IexCloudServiceTest {
+@SpringBootTest(classes = IexCloudProvider.class)
+public class IexCloudProviderTest {
 
     @Autowired
-    IexCloudService iexCloudService;
+    IexCloudProvider iexCloudProvider;
 
     @MockBean
     WebClient.Builder builder;
@@ -57,7 +53,7 @@ public class IexCloudServiceTest {
         iexClouds.add(iexCloud2);
 
         // when
-        List<StockInformationDto> stockInformationDtos = iexCloudService
+        List<StockInformationDto> stockInformationDtos = iexCloudProvider
             .getStockData(stockSymbol, iexClouds);
         StockInformationDto stockInformationDto = StockInformationDto.of(stockSymbol, iexCloud1);
 
