@@ -40,12 +40,11 @@ public class StockService {
             Profit profit = stock.getProfit(date);
             return StockProfitResponse.of(stock, profit);
         }
-
         List<StockInformationDto> stockInformation = getStockInformation(symbol);
         List<Double> price = parsePrice(stockInformation);
         List<LocalDate> dates = parseDate(stockInformation);
-
         CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
+
         Profit profit = CreateProfit.toEntity(createProfit, stock);
         stock.addProfit(profit);
         stockRepository.save(stock);
