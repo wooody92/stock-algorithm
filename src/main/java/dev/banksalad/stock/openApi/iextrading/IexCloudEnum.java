@@ -8,6 +8,9 @@ public enum IexCloudEnum {
     PATH_STOCK("/stock/"),
     PATH_CHART("/chart"),
     PATH_MONTH("/1m"),
+    PATH_DAYS("/5d"),
+    SORT("sort"),
+    DESC("desc"),
     TOKEN("token"),
     PUBLIC_KEY("Tpk_14ad95bb91954d929f4d657bbcb51d58");
 

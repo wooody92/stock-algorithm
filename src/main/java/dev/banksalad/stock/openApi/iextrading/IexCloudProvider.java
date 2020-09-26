@@ -2,6 +2,7 @@ package dev.banksalad.stock.openApi.iextrading;
 
 import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,4 +41,23 @@ public class IexCloudProvider implements OpenApiProvider {
             .map(iexCloud -> StockInformationDto.of(symbol, iexCloud))
             .collect(Collectors.toList());
     }
+
+    public LocalDate getLatestRecordDate(String symbol) {
+        WebClient webClient = builder.baseUrl(BASE_URL.getValue()).build();
+        List<IexCloud> iexCloudList = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(PATH_STOCK.getValue())
+                .path(symbol)
+                .path(PATH_CHART.getValue())
+                .path(PATH_DAYS.getValue())
+                .queryParam(SORT.getValue(), DESC.getValue())
+                .queryParam(TOKEN.getValue(), PUBLIC_KEY.getValue())
+                .build())
+            .retrieve()
+            .bodyToFlux(IexCloud.class)
+            .collectList()
+            .block();
+        return iexCloudList.get(0).getDate();
+    }
+
 }
