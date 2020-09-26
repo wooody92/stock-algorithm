@@ -9,6 +9,7 @@ import dev.banksalad.stock.utils.StockAlgorithm;
 import dev.banksalad.stock.web.dto.request.CreateProfit;
 import dev.banksalad.stock.web.dto.request.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,27 +27,31 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    public List<StockInformationDto> getStockInformation(String symbol) {
-        List<IexCloud> iexClouds = iexCloudProvider.requestData(symbol);
-        return iexCloudProvider.getStockData(symbol, iexClouds);
-    }
-
     @Transactional
-    public void getMaxProfitDate(String symbol) {
-        List<StockInformationDto> stockInformation = getStockInformation(symbol);
-        List<Double> price = parsePrice(stockInformation);
-        List<LocalDate> dates = parseDate(stockInformation);
-
+    public StockProfitResponse getMaxProfitDate(String symbol) {
         Stock stock = stockRepository.findBySymbol(symbol);
         if (Objects.isNull(stock)) {
             stock = CreateStock.toEntity(symbol);
         }
+        if (stock.isExistDate()) {
+            return StockProfitResponse.of(stock);
+        }
+
+        List<StockInformationDto> stockInformation = getStockInformation(symbol);
+        List<Double> price = parsePrice(stockInformation);
+        List<LocalDate> dates = parseDate(stockInformation);
+
         CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
         Profit profit = CreateProfit.toEntity(createProfit, stock);
         stock.addProfit(profit);
-
         stockRepository.save(stock);
-        System.out.println(profit);
+
+        return StockProfitResponse.of(stock);
+    }
+
+    public List<StockInformationDto> getStockInformation(String symbol) {
+        List<IexCloud> iexClouds = iexCloudProvider.requestData(symbol);
+        return iexCloudProvider.getStockData(symbol, iexClouds);
     }
 
     private List<Double> parsePrice(List<StockInformationDto> stockInformation) {
