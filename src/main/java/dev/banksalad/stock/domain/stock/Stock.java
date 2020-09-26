@@ -32,7 +32,7 @@ public class Stock {
     private List<Profit> profits = new ArrayList<>();
 
     @Builder
-    public Stock(String symbol) {
+    protected Stock(String symbol) {
         this.symbol = symbol;
     }
 

@@ -39,7 +39,7 @@ public class Profit {
     private Stock stock;
 
     @Builder
-    public Profit(LocalDate date, Double profit, LocalDate purchaseDate, LocalDate saleDate,
+    protected Profit(LocalDate date, Double profit, LocalDate purchaseDate, LocalDate saleDate,
         Stock stock) {
         this.date = date;
         this.profit = profit;
