@@ -1,4 +1,4 @@
-package dev.banksalad.stock.global.exception;
+package dev.banksalad.stock.global.error;
 
 import lombok.Builder;
 import lombok.Getter;
