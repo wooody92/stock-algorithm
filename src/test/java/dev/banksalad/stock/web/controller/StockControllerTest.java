@@ -11,7 +11,6 @@ import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -38,11 +37,12 @@ public class StockControllerTest {
     @MockBean
     StockService stockService;
 
-    private List<StockInformationDto> stockInformationDtos = new ArrayList<>();
-    private final String stockSymbol = "AAPL";
+    private final String STOCK_SYMBOL = "AAPL";
 
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    @DisplayName("주식 심볼을 바탕으로 해당 주식의 지난 데이터들을 조회하는 테스트")
+    public void viewStockChartTest() throws Exception {
+        // given
         IexCloud iexCloud1 = IexCloud.builder()
             .date(LocalDate.parse("2020-09-23"))
             .open(111.62)
@@ -59,29 +59,25 @@ public class StockControllerTest {
             .low(105.0)
             .volume(167743349L)
             .build();
+        List<StockInformationDto> stockInformation = new ArrayList<>();
+        stockInformation.add(StockInformationDto.of(STOCK_SYMBOL, iexCloud1));
+        stockInformation.add(StockInformationDto.of(STOCK_SYMBOL, iexCloud2));
 
-        stockInformationDtos.add(StockInformationDto.of(stockSymbol, iexCloud1));
-        stockInformationDtos.add(StockInformationDto.of(stockSymbol, iexCloud2));
-    }
-
-    @Test
-    @DisplayName("주식 심볼을 바탕으로 해당 주식의 지난 데이터들을 조회하는 테스트")
-    public void viewStockChartTest() throws Exception {
-        // given, when
-        when(stockService.getStockInformation(stockSymbol)).thenReturn(stockInformationDtos);
+        // when
+        when(stockService.getStockInformation(STOCK_SYMBOL)).thenReturn(stockInformation);
 
         // then
-        mockMvc.perform(get("/stock/" + stockSymbol + "/chart"))
+        mockMvc.perform(get("/stock/" + STOCK_SYMBOL + "/chart"))
             .andExpect(status().isOk())
             .andDo(print())
-            .andExpect(content().json(stockInformationDtos.toString()));
+            .andExpect(content().json(stockInformation.toString()));
     }
 
     @Test
     @DisplayName("주식 정보를 바탕으로 최대 수익을 내는 날짜 정보를 조회하는 테스트")
     public void viewMaxProfitTest() throws Exception {
         //given
-        Stock stock = CreateStock.toEntity(stockSymbol);
+        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
         CreateProfit createProfit = CreateProfit.builder()
             .date(LocalDate.parse("2020-09-24"))
             .profit(108.22)
@@ -92,10 +88,10 @@ public class StockControllerTest {
         StockProfitResponse stockProfitResponse = StockProfitResponse.of(stock, profit);
 
         //when
-        when(stockService.getMaxProfitDate(stockSymbol)).thenReturn(stockProfitResponse);
+        when(stockService.getMaxProfitDate(STOCK_SYMBOL)).thenReturn(stockProfitResponse);
 
         //then
-        mockMvc.perform(get("/stock/" + stockSymbol))
+        mockMvc.perform(get("/stock/" + STOCK_SYMBOL))
             .andExpect(status().isOk())
             .andDo(print())
             .andExpect(content().json(stockProfitResponse.toString()));
