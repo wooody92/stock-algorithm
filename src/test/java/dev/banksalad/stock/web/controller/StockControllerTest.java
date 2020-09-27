@@ -1,7 +1,5 @@
 package dev.banksalad.stock.web.controller;
 
-import static org.hamcrest.Matchers.is;
-
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
@@ -18,11 +16,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(StockController.class)
@@ -63,9 +62,11 @@ public class StockControllerTest {
     @Test
     @DisplayName("주식 심볼을 바탕으로 해당 주식의 지난 데이터들을 조회하는 테스트")
     public void viewStockChartTest() throws Exception {
-        given(stockService.getStockInformation(stockSymbol)).willReturn(stockInformationDtos);
+        // given, when
+        when(stockService.getStockInformation(stockSymbol)).thenReturn(stockInformationDtos);
 
-        mockMvc.perform(get("/stock/" + stockSymbol))
+        // then
+        mockMvc.perform(get("/stock/" + stockSymbol + "/chart"))
             .andExpect(status().isOk())
             .andDo(print())
             .andExpect(content().json(stockInformationDtos.toString()));
