@@ -1,8 +1,13 @@
 package dev.banksalad.stock.web.controller;
 
+import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;
+import dev.banksalad.stock.web.dto.create.CreateProfit;
+import dev.banksalad.stock.web.dto.create.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
+import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,5 +75,29 @@ public class StockControllerTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andExpect(content().json(stockInformationDtos.toString()));
+    }
+
+    @Test
+    @DisplayName("주식 정보를 바탕으로 최대 수익을 내는 날짜 정보를 조회하는 테스트")
+    public void viewMaxProfitTest() throws Exception {
+        //given
+        Stock stock = CreateStock.toEntity(stockSymbol);
+        CreateProfit createProfit = CreateProfit.builder()
+            .date(LocalDate.parse("2020-09-24"))
+            .profit(108.22)
+            .purchaseDate(LocalDate.parse("2020-09-23"))
+            .saleDate(LocalDate.parse("2020-09-24"))
+            .build();
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        StockProfitResponse stockProfitResponse = StockProfitResponse.of(stock, profit);
+
+        //when
+        when(stockService.getMaxProfitDate(stockSymbol)).thenReturn(stockProfitResponse);
+
+        //then
+        mockMvc.perform(get("/stock/" + stockSymbol))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().json(stockProfitResponse.toString()));
     }
 }

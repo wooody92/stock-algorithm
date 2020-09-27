@@ -7,10 +7,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockProfitResponse {
 
@@ -38,5 +36,16 @@ public class StockProfitResponse {
             .purchaseDate(profit.getPurchaseDate())
             .saleDate(profit.getSaleDate())
             .build();
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            "\"symbol\":" + symbol +
+            ",\"date\":" + date +
+            ",\"profit\":" + profit +
+            ",\"purchaseDate\":" + purchaseDate +
+            ",\"saleDate\":" + saleDate +
+            '}';
     }
 }
