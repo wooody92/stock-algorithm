@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
+import dev.banksalad.stock.global.error.exception.NullProfitException;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import java.time.LocalDate;
@@ -81,5 +82,29 @@ public class StockRepositoryTest {
         assertThat(newStock).isNotNull();
         assertThat(profits).isNotEmpty();
         assertThat(profits.get(0)).isEqualTo(profit);
+    }
+
+    @Test
+    @DisplayName("Stock의 Profit 리스트에 특정 date의 Profit을 가져오는 테스트")
+    public void isExistDateOnProfitTest() {
+        // given
+        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        CreateProfit createProfit = CreateProfit.builder()
+            .date(LocalDate.parse("2020-09-24"))
+            .profit(108.22)
+            .purchaseDate(LocalDate.parse("2020-09-23"))
+            .saleDate(LocalDate.parse("2020-09-24"))
+            .build();
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+
+        // when
+        stock.addProfit(profit);
+        Stock newStock = stockRepository.save(stock);
+        Profit existingProfit = newStock.getProfit(LocalDate.parse("2020-09-24"));
+
+        // then
+        assertThat(newStock).isNotNull();
+        assertThat(existingProfit).isNotNull();
+        assertThat(existingProfit).isEqualTo(profit);
     }
 }
