@@ -3,7 +3,6 @@ package dev.banksalad.stock.web.dto.create;
 import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import java.time.LocalDate;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class CreateProfit {
 
     private Double profit;
