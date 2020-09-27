@@ -1,4 +1,4 @@
-package dev.banksalad.stock.service;
+package dev.banksalad.stock.openApi.iextrading;
 
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IexCloudProvider.class)
-public class IexCloudProviderTest {
+public class IexCloudProviderSliceTest {
 
     @Autowired
     IexCloudProvider iexCloudProvider;
@@ -27,7 +27,7 @@ public class IexCloudProviderTest {
     @MockBean
     WebClient.Builder builder;
 
-    private final String stockSymbol = "AAPL";
+    private final String STOCK_SYMBOL = "AAPL";
 
     @Test
     @DisplayName("IexCloud 리스트를 StockInformationDto 리스트로 변환하는 테스트")
@@ -55,8 +55,8 @@ public class IexCloudProviderTest {
 
         // when
         List<StockInformationDto> stockInformationDtos = iexCloudProvider
-            .getStockData(stockSymbol, iexClouds);
-        StockInformationDto stockInformationDto = StockInformationDto.of(stockSymbol, iexCloud1);
+            .getStockData(STOCK_SYMBOL, iexClouds);
+        StockInformationDto stockInformationDto = StockInformationDto.of(STOCK_SYMBOL, iexCloud1);
 
         // then
         assertThat(stockInformationDtos).isNotEmpty();
@@ -64,9 +64,5 @@ public class IexCloudProviderTest {
         assertThat(stockInformationDtos.get(0)).isInstanceOf(StockInformationDto.class);
         assertThat(stockInformationDtos.get(0).getClose())
             .isEqualTo(stockInformationDto.getClose());
-    }
-
-    @Test
-    public void requestDataTest() {
     }
 }
