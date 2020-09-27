@@ -127,4 +127,21 @@ public class StockRepositoryTest {
         //then
         newStock.getProfit(NON_EXIST_DATE);
     }
+
+    @Test
+    @DisplayName("Stock의 Profit 리스트에 특정 date의 Profit이 있는지 확인하는 테스트")
+    public void isExistDateOnProfitTest() throws Exception {
+        //given
+        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        CreateProfit createProfit = initCreateProfit;
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+
+        //when
+        stock.addProfit(profit);
+        Stock newStock = stockRepository.save(stock);
+
+        //then
+        assertThat(newStock.isExistDate(EXIST_DATE)).isEqualTo(true);
+        assertThat(newStock.isExistDate(NON_EXIST_DATE)).isEqualTo(false);
+    }
 }
