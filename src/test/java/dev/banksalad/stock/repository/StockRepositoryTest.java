@@ -9,6 +9,7 @@ import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -27,6 +28,19 @@ public class StockRepositoryTest {
 
     private final String STOCK_SYMBOL = "AAPL";
     private final String NON_EXISTING = "NON_EXISTING";
+    private final LocalDate EXIST_DATE = LocalDate.parse("2020-09-24");
+    private final LocalDate NON_EXIST_DATE = LocalDate.parse("2020-01-01");
+    private CreateProfit initCreateProfit;
+
+    @Before
+    public void setUp() throws Exception {
+        initCreateProfit = CreateProfit.builder()
+            .date(EXIST_DATE)
+            .profit(108.22)
+            .purchaseDate(LocalDate.parse("2020-09-23"))
+            .saleDate(LocalDate.parse("2020-09-24"))
+            .build();
+    }
 
     @Test
     @DisplayName("Stock 저장하는 테스트")
@@ -65,12 +79,7 @@ public class StockRepositoryTest {
     public void addProfitTest() {
         // given
         Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = CreateProfit.builder()
-            .date(LocalDate.parse("2020-09-24"))
-            .profit(108.22)
-            .purchaseDate(LocalDate.parse("2020-09-23"))
-            .saleDate(LocalDate.parse("2020-09-24"))
-            .build();
+        CreateProfit createProfit = initCreateProfit;
         Profit profit = CreateProfit.toEntity(createProfit, stock);
 
         // when
@@ -86,25 +95,36 @@ public class StockRepositoryTest {
 
     @Test
     @DisplayName("Stock의 Profit 리스트에 특정 date의 Profit을 가져오는 테스트")
-    public void isExistDateOnProfitTest() {
+    public void getProfitTest() {
         // given
         Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = CreateProfit.builder()
-            .date(LocalDate.parse("2020-09-24"))
-            .profit(108.22)
-            .purchaseDate(LocalDate.parse("2020-09-23"))
-            .saleDate(LocalDate.parse("2020-09-24"))
-            .build();
+        CreateProfit createProfit = initCreateProfit;
         Profit profit = CreateProfit.toEntity(createProfit, stock);
 
         // when
         stock.addProfit(profit);
         Stock newStock = stockRepository.save(stock);
-        Profit existingProfit = newStock.getProfit(LocalDate.parse("2020-09-24"));
+        Profit existingProfit = newStock.getProfit(EXIST_DATE);
 
         // then
         assertThat(newStock).isNotNull();
         assertThat(existingProfit).isNotNull();
         assertThat(existingProfit).isEqualTo(profit);
+    }
+
+    @Test(expected = NullProfitException.class)
+    @DisplayName("Stock이 Profit 리스트에 없는 date의 Profit을 가져오는 테스트")
+    public void getProfitTest_Fail() throws Exception {
+        //given
+        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        CreateProfit createProfit = initCreateProfit;
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+
+        //when
+        stock.addProfit(profit);
+        Stock newStock = stockRepository.save(stock);
+
+        //then
+        newStock.getProfit(NON_EXIST_DATE);
     }
 }
