@@ -58,4 +58,28 @@ public class StockRepositoryTest {
         assertThat(existingStock.getSymbol()).isEqualTo(STOCK_SYMBOL);
         assertThat(nonExistingStock).isNull();
     }
+
+    @Test
+    @DisplayName("Stock에 Profit 추가하고 저장하는 테스트")
+    public void addProfitTest() {
+        // given
+        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        CreateProfit createProfit = CreateProfit.builder()
+            .date(LocalDate.parse("2020-09-24"))
+            .profit(108.22)
+            .purchaseDate(LocalDate.parse("2020-09-23"))
+            .saleDate(LocalDate.parse("2020-09-24"))
+            .build();
+        Profit profit = CreateProfit.toEntity(createProfit, stock);
+
+        // when
+        stock.addProfit(profit);
+        Stock newStock = stockRepository.save(stock);
+        List<Profit> profits = newStock.getProfits();
+
+        // then
+        assertThat(newStock).isNotNull();
+        assertThat(profits).isNotEmpty();
+        assertThat(profits.get(0)).isEqualTo(profit);
+    }
 }
