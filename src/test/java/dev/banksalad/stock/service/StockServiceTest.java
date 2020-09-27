@@ -56,4 +56,21 @@ public class StockServiceTest {
         assertThat(maxProfitDate.getPurchaseDate()).isEqualTo(LocalDate.parse("2020-09-23"));
         assertThat(maxProfitDate.getSaleDate()).isEqualTo(LocalDate.parse("2020-09-24"));
     }
+
+    @Test
+    @DisplayName("외부 API 요청 후 최대 수익과 날짜를 정상적으로 반환하는지 확인하는 테스트")
+    public void getMaxProfitDateTest() {
+        // given, when
+        StockProfitResponse maxProfitDate = stockService.getMaxProfitDate(STOCK_SYMBOL);
+
+        //then
+        assertThat(maxProfitDate).isNotNull();
+        assertThat(maxProfitDate.getSymbol()).isEqualTo(STOCK_SYMBOL);
+        assertThat(maxProfitDate.getDate())
+            .isBetween(LocalDate.now().minusDays(5), LocalDate.now());
+        assertThat(maxProfitDate.getPurchaseDate())
+            .isBetween(maxProfitDate.getDate().minusDays(180), maxProfitDate.getDate());
+        assertThat(maxProfitDate.getSaleDate())
+            .isBetween(maxProfitDate.getPurchaseDate(), maxProfitDate.getDate());
+    }
 }
