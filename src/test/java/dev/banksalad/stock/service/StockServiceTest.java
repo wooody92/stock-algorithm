@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,6 +31,7 @@ public class StockServiceTest {
     private final String STOCK_SYMBOL = "AAPL";
 
     @Test
+    @Transactional
     @DisplayName("이미 요청했던 날짜와 심볼을 다시 요청했을 때 DB에 기록된 데이터로 반환하는지 확인하는 테스트")
     public void getMaxProfitDateTest_DB() {
         //given
@@ -58,6 +60,7 @@ public class StockServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("외부 API 요청 후 최대 수익과 날짜를 정상적으로 반환하는지 확인하는 테스트")
     public void getMaxProfitDateTest() {
         // given, when
