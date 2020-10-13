@@ -45,11 +45,9 @@ public class Stock {
     }
 
     public Profit getProfit(LocalDate date) {
-        for (Profit profit : profits) {
-            if (profit.isEqualsDate(date)) {
-                return profit;
-            }
-        }
-        throw new NullProfitException();
+        return profits.stream()
+            .filter(profit -> profit.isEqualsDate(date))
+            .findFirst()
+            .orElseThrow(NullProfitException::new);
     }
 }
