@@ -6,16 +6,13 @@ import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.global.utility.StockAlgorithm;
-import dev.banksalad.stock.web.dto.PriceAndDates;
+import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,9 +35,10 @@ public class StockService {
             Profit profit = stock.getProfit(date);
             return StockProfitResponse.of(stock, profit);
         }
-        PriceAndDates priceAndDates = PriceAndDates.of(getStockInformation(symbol));
-        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(priceAndDates);
+        StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
+        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(stockInformation);
         Profit profit = CreateProfit.toEntity(createProfit, stock);
+
         stock.addProfit(profit);
         stockRepository.save(stock);
         return StockProfitResponse.of(stock, profit);

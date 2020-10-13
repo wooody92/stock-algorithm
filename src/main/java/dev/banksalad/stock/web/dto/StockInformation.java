@@ -12,22 +12,27 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PriceAndDates {
+public class StockInformation {
 
-    private List<Double> price;
-    private List<LocalDate> dates;
+    private List<StockInformationDto> stockInformationDtos;
 
     @Builder
-    public PriceAndDates(List<Double> price, List<LocalDate> dates) {
-        this.price = price;
-        this.dates = dates;
+    protected StockInformation(List<StockInformationDto> stockInformationDtos) {
+        this.stockInformationDtos = stockInformationDtos;
     }
 
-    public static PriceAndDates of(List<StockInformationDto> stockInformation) {
-        return PriceAndDates.builder()
-            .price(parsePrice(stockInformation))
-            .dates(parseDate(stockInformation))
+    public static StockInformation of(List<StockInformationDto> stockInformationDtos) {
+        return StockInformation.builder()
+            .stockInformationDtos(stockInformationDtos)
             .build();
+    }
+
+    public List<Double> getPrices() {
+        return parsePrice(this.stockInformationDtos);
+    }
+
+    public List<LocalDate> getDates() {
+        return parseDate(this.stockInformationDtos);
     }
 
     private static List<Double> parsePrice(List<StockInformationDto> stockInformation) {

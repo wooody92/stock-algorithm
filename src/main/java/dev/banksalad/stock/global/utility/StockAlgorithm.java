@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.utility;
 
-import dev.banksalad.stock.web.dto.PriceAndDates;
+import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -12,9 +12,9 @@ public class StockAlgorithm {
      * 가격 변동이 없거나, 계속 떨어지기만 한다면 maxProfit = 0.0 입니다.
      * 해당 경우 purchaseDate, salDate는 dates의 처음 날짜로 반환 합니다.
      */
-    public static CreateProfit getMaxProfitAndDate(PriceAndDates priceAndDates) {
-        List<Double> price = priceAndDates.getPrice();
-        List<LocalDate> dates = priceAndDates.getDates();
+    public static CreateProfit getMaxProfitAndDate(StockInformation stockInformation) {
+        List<Double> price = stockInformation.getPrices();
+        List<LocalDate> dates = stockInformation.getDates();
         double maxProfit = 0;
         double minPrice = price.get(0);
         int purchaseIndex = 0;
