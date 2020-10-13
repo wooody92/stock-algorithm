@@ -6,6 +6,7 @@ import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.openApi.iextrading.IexCloudProvider;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.global.utility.StockAlgorithm;
+import dev.banksalad.stock.web.dto.PriceAndDates;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
@@ -37,12 +38,8 @@ public class StockService {
             Profit profit = stock.getProfit(date);
             return StockProfitResponse.of(stock, profit);
         }
-
-        List<StockInformationDto> stockInformation = getStockInformation(symbol);
-        List<Double> price = parsePrice(stockInformation);
-        List<LocalDate> dates = parseDate(stockInformation);
-        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
-
+        PriceAndDates priceAndDates = PriceAndDates.of(getStockInformation(symbol));
+        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(priceAndDates);
         Profit profit = CreateProfit.toEntity(createProfit, stock);
         stock.addProfit(profit);
         stockRepository.save(stock);
@@ -56,19 +53,5 @@ public class StockService {
 
     public LocalDate getLatestRecordDate(String symbol) {
         return iexCloudProvider.getLatestRecordDate(symbol);
-    }
-
-    private List<Double> parsePrice(List<StockInformationDto> stockInformation) {
-        return stockInformation.stream()
-            .map(data -> new Double(data.getClose()))
-            .collect(Collectors.toList());
-    }
-
-    private List<LocalDate> parseDate(List<StockInformationDto> stockInformation) {
-        List<LocalDate> dates = new ArrayList<>();
-        for (StockInformationDto data : stockInformation) {
-            dates.add(data.getDate());
-        }
-        return dates;
     }
 }
