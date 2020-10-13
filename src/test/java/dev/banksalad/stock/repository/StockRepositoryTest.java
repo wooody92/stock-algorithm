@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.global.error.exception.NullProfitException;
+import dev.banksalad.stock.global.error.exception.StockApiException;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import java.time.LocalDate;
@@ -64,8 +65,8 @@ public class StockRepositoryTest {
         Stock newStock = stockRepository.save(stock);
 
         // when
-        Stock existingStock = stockRepository.findBySymbol(STOCK_SYMBOL);
-        Stock nonExistingStock = stockRepository.findBySymbol(NON_EXISTING);
+        Stock existingStock = stockRepository.findBySymbol(STOCK_SYMBOL).orElseThrow(StockApiException::new);
+        Stock nonExistingStock = stockRepository.findBySymbol(NON_EXISTING).orElseThrow(StockApiException::new);
 
         // then
         assertThat(newStock).isNotNull();

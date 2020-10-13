@@ -31,15 +31,13 @@ public class StockService {
 
     @Transactional
     public StockProfitResponse getMaxProfitDate(String symbol) {
-        Stock stock = stockRepository.findBySymbol(symbol);
+        Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
         LocalDate date = getLatestRecordDate(symbol);
-        if (Objects.isNull(stock)) {
-            stock = CreateStock.toEntity(symbol);
-        }
         if (stock.isExistDate(date)) {
             Profit profit = stock.getProfit(date);
             return StockProfitResponse.of(stock, profit);
         }
+
         List<StockInformationDto> stockInformation = getStockInformation(symbol);
         List<Double> price = parsePrice(stockInformation);
         List<LocalDate> dates = parseDate(stockInformation);
