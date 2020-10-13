@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.error.exception;
 
-public class EmptyStockException extends RuntimeException{
+public class EmptyStockException extends StockApiException {
 
     public EmptyStockException() {
     }

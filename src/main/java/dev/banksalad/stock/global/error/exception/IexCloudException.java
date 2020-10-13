@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.error.exception;
 
-public class IexCloudException extends RuntimeException {
+public class IexCloudException extends StockApiException {
 
     public IexCloudException() {
     }

@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.error.exception;
 
-public class InvalidSymbolException extends RuntimeException{
+public class InvalidSymbolException extends StockApiException {
 
     public InvalidSymbolException() {
     }

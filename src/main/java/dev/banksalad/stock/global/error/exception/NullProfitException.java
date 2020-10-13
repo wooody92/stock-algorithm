@@ -1,6 +1,6 @@
 package dev.banksalad.stock.global.error.exception;
 
-public class NullProfitException extends RuntimeException {
+public class NullProfitException extends StockApiException {
 
     public NullProfitException() {
     }
