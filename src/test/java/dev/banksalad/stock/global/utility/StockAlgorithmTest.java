@@ -2,7 +2,10 @@ package dev.banksalad.stock.global.utility;
 
 import static org.junit.Assert.*;
 
+import dev.banksalad.stock.openApi.iextrading.IexCloud;
+import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
+import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class StockAlgorithmTest {
+
+    private final String STOCK_SYMBOL = "AAPL";
 
     /**
      * dates = {2020-01-01, 2020-01-02, 2020-01-03, 2020-01-04, 2020-01-05, 2020-01-06, 2020-01-07,
@@ -29,18 +34,24 @@ public class StockAlgorithmTest {
             {2.0, 5.0, 3.0, 8.0, 1.0, 4.0, 7.0, 10.0, 9.0, 6.0},
             {128.31, 128.28, 128.24, 132.66, 134.66, 134.2, 123.52, 125.18, 114.78, 118.14}
         };
-        List<Double> priceList = new ArrayList<>();
         List<LocalDate> dates = new ArrayList<>();
+        List<StockInformationDto> stockInformationDtos = new ArrayList<>();
 
         // when
         CreateProfit[] maxProfitAndDate = new CreateProfit[priceBucket.length];
         for (int i = 0; i < priceBucket.length; i++) {
             for (int j = 0; j < priceBucket[i].length; j++) {
-                dates.add(LocalDate.of(2020, 01, 01).plusDays(j));
-                priceList.add(priceBucket[i][j]);
+                IexCloud iexCloud = IexCloud.builder()
+                    .close(priceBucket[i][j])
+                    .date(LocalDate.of(2020, 01, 01).plusDays(j))
+                    .build();
+                StockInformationDto stockInformationDto = StockInformationDto.of(STOCK_SYMBOL, iexCloud);
+                stockInformationDtos.add(stockInformationDto);
             }
-            maxProfitAndDate[i] = StockAlgorithm.getMaxProfitAndDate(priceList, dates);
-            priceList.clear();
+            StockInformation stockInformation = StockInformation.of(stockInformationDtos);
+            maxProfitAndDate[i] = StockAlgorithm.getMaxProfitAndDate(stockInformation);
+            dates.addAll(stockInformation.getDates());
+            stockInformationDtos.clear();
         }
 
         // then

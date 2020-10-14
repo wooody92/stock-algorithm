@@ -66,7 +66,7 @@ public class StockRepositoryTest {
 
         // when
         Stock existingStock = stockRepository.findBySymbol(STOCK_SYMBOL).orElseThrow(StockApiException::new);
-        Stock nonExistingStock = stockRepository.findBySymbol(NON_EXISTING).orElseThrow(StockApiException::new);
+        Stock nonExistingStock = stockRepository.findBySymbol(NON_EXISTING).orElse(null);
 
         // then
         assertThat(newStock).isNotNull();
