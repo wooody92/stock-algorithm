@@ -174,3 +174,190 @@
 
   <img width="1252" alt="test-coverage" src="https://user-images.githubusercontent.com/58318041/94372321-730d1b80-0137-11eb-8190-c3883e75c374.png">
 
+
+
+-----
+
+## # 코드 개선
+
+1. 람다식을 사용하여 체이닝 메서드 방식으로 코드 가독성 향상
+
+   ```java
+   // before
+   public Profit getProfit(LocalDate date) {
+     for (Profit profit : profits) {
+       if (profit.isEqualsDate(date)) {
+         return profit;
+       }
+     }
+     throw new NullProfitException();
+   }
+   ```
+
+   ```java
+   // after
+   public Profit getProfit(LocalDate date) {
+     return profits.stream()
+       .filter(profit -> profit.isEqualsDate(date))
+       .findFirst()
+       .orElseThrow(NullProfitException::new);
+   }
+   ```
+
+2. Exception 구조를 StockApiException이라는 상위 클래스를 상속받는 구조로 패키징화
+
+   - 각각의 Exception이 RuntimeException을 상속받는 구조가 아니고 StockApiException으로 한번더 Wrapping하여 계층화 구조 설계
+   - 예상치 못한 에러를 런타임 에러보다 커스텀 에러로 던지기 위한 안전장치
+
+   ```java
+   public class StockApiException extends RuntimeException {
+   
+       public StockApiException() {
+       }
+   
+       public StockApiException(String message) {
+           super(message);
+       }
+   }
+   ```
+
+   ```java
+   public class InvalidSymbolException extends StockApiException {
+   
+       public InvalidSymbolException() {
+       }
+   }
+   ```
+
+   ```java
+   public class EmptyStockException extends StockApiException {
+   
+       public EmptyStockException() {
+       }
+   }
+   ```
+
+3. 외부 API 응답으로 받아온 주식 정보의 최신 날짜가 다름으로 발생하는 DB 조회 문제
+
+   1. 한국과 미 주식 거래소 시차로 발생하는 문제 (자정 시 LocalDate.now() 기준 2일 차이)
+      - DB TimeZone을 미 주식 거래소 API 시간에 맞추어 환경변수 설정
+   2. 미 주식 거래소에서 제공하는 API 업데이트 자체가 늦을 경우에는?
+      - 미 주식 거래소에 가장 최근에 기록된 날짜를 가져오는 로직 추가
+      - 중복코드 발생
+   3. API 엔드포인트에 `/stock/{symbol}?date=2020-10-10`와 같이 특정 날짜 기준으로 이전 180일을 조회하는 방식으로 구현 (날짜 미입력 시 default는 오늘)
+      - 프로젝트에서 사용한 IexCloud에서는 해당 API 기능을 제공하지 않는다. 다른 거래소 API를 사용한다면?
+      - 캐시를 이용하여 동일한 요청에 대해서는 리소스 낭비를 줄일 수 있겠다. (`@Cashable`, `@EnableCashing`)
+
+4. 서비스 계층에서 구체화한 IexCloudProvider 클래스를 주입받기 보다는 OpenApiProvider 인터페이스의 의존성을 주입 받아서 확장성에 유연하게 대응
+
+   - SOLID - DIP(Dependency Inversion Principle) : 의존성 역전의 원칙에 의거 리팩토링
+
+   - 두 개 이상의 구현체가 있는 인터페이스 의존성 주입
+
+     ```java
+     // before
+     private final IexCloudProvider iexCloudProvider;
+     ```
+
+     ```java
+     // after
+     @Qualifier("iexCloudProvider")
+     private final OpenApiProvider openApiProvider;
+     ```
+
+5. Optional 사용으로 로직 간소화 및 가독성 향상
+
+   - `Optional<Stock> findBySymbol(String name)`
+
+   ```java
+   // before
+   @Transactional
+   public StockProfitResponse getMaxProfitDate(String symbol) {
+     Stock stock = stockRepository.findBySymbol(symbol);
+     LocalDate date = getLatestRecordDate(symbol);
+     if (Objects.isNull(stock)) {
+       stock = CreateStock.toEntity(symbol);
+     }
+     if (stock.isExistDate(date)) {
+       Profit profit = stock.getProfit(date);
+       return StockProfitResponse.of(stock, profit);
+     }
+     ...
+   }
+   ```
+
+   ```java
+   // after
+   @Transactional
+   public StockProfitResponse getMaxProfitDate(String symbol) {
+     Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
+     LocalDate date = getLatestRecordDate(symbol);
+     if (stock.isExistDate(date)) {
+       Profit profit = stock.getProfit(date);
+       return StockProfitResponse.of(stock, profit);
+     }
+     ...
+   }
+   ```
+
+6. 컬렉션 객체를 일급컬렉션으로 설정하여 더욱 객체지향적으로 변경 및 코드 가독성 향상
+
+   - `List<StockInformationDto>`를 필드 값으로 갖는 StockInformation 클래스 생성
+
+   - 객체지향 : 서비스 계층에서 사용하던 parsePrice(), parseDate() 메서드를 StockInformation 클래스에서 처리
+
+     ```java
+     // before
+     @Transactional
+     public StockProfitResponse getMaxProfitDate(String symbol) {
+       Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
+       LocalDate date = getLatestRecordDate(symbol);
+       if (stock.isExistDate(date)) {
+         Profit profit = stock.getProfit(date);
+         return StockProfitResponse.of(stock, profit);
+       }
+       List<StockInformationDto> stockInformation = getStockInformation(symbol);
+       List<Double> price = parsePrice(stockInformation);
+       List<LocalDate> dates = parseDate(stockInformation);
+       CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(price, dates);
+       Profit profit = CreateProfit.toEntity(createProfit, stock);
+       
+       stock.addProfit(profit);
+       stockRepository.save(stock);
+       return StockProfitResponse.of(stock, profit);
+     }
+     ```
+
+     ```java
+     // after
+     @Transactional
+     public StockProfitResponse getMaxProfitDate(String symbol) {
+       Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
+       LocalDate date = getLatestRecordDate(symbol);
+       if (stock.isExistDate(date)) {
+         Profit profit = stock.getProfit(date);
+         return StockProfitResponse.of(stock, profit);
+       }
+       StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
+       CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(stockInformation);
+       Profit profit = CreateProfit.toEntity(createProfit, stock);
+     
+       stock.addProfit(profit);
+       stockRepository.save(stock);
+       return StockProfitResponse.of(stock, profit);
+     }
+     ```
+
+   - 캡슐화 : 최대 수익을 구하는 메서드의 매개변수를 일급컬렉션으로 캡슐화하여 안정성 향상
+
+     ```java
+     // before
+     getMaxProfitAndDate(List<Double> price, List<LocalDate> dates)
+     // after
+     getMaxProfitAndDate(StockInformation stockInformation)
+     ```
+
+7. 리팩토링으로 인한 StockAlgorithm - getMaxProfitAndDateTest 메서드 매개변수 수정 후 테스트 커버리지 확인
+
+   <img width="1220" alt="banksalad test" src="https://user-images.githubusercontent.com/58318041/95952802-bc49b480-0e33-11eb-8245-2ee12812cd74.png">
+
