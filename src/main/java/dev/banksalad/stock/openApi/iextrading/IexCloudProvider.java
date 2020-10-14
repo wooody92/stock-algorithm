@@ -49,12 +49,14 @@ public class IexCloudProvider implements OpenApiProvider {
         return iexCloudList;
     }
 
-    public List<StockInformationDto> getStockData(String symbol, List<IexCloud> iexClouds) {
+    @Override
+    public <T> List<StockInformationDto> getStockData(String symbol, List<T> iexClouds) {
         return iexClouds.stream()
-            .map(iexCloud -> StockInformationDto.of(symbol, iexCloud))
+            .map(iexCloud -> StockInformationDto.of(symbol, (IexCloud) iexCloud))
             .collect(Collectors.toList());
     }
 
+    @Override
     public LocalDate getLatestRecordDate(String symbol) {
         WebClient webClient = builder.baseUrl(BASE_URL.getValue()).build();
         List<IexCloud> iexCloudList = webClient.get()
@@ -77,5 +79,4 @@ public class IexCloudProvider implements OpenApiProvider {
         }
         return iexCloudList.get(0).getDate();
     }
-
 }
