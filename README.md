@@ -248,7 +248,7 @@
       - 중복코드 발생
    3. API 엔드포인트에 `/stock/{symbol}?date=2020-10-10`와 같이 특정 날짜 기준으로 이전 180일을 조회하는 방식으로 구현 (날짜 미입력 시 default는 오늘)
       - 프로젝트에서 사용한 IexCloud에서는 해당 API 기능을 제공하지 않는다. 다른 거래소 API를 사용한다면?
-      - 캐시를 이용하여 동일한 요청에 대해서는 리소스 낭비를 줄일 수 있겠다. (`@Cashable`, `@EnableCashing`)
+      - 캐시를 이용하여] 동일한 요청에 대해서는 리소스 낭비를 줄일 수 있겠다. (`@Cacheable`, `@EnableCaching`)
 
 4. 서비스 계층에서 구체화한 IexCloudProvider 클래스를 주입받기 보다는 OpenApiProvider 인터페이스의 의존성을 주입 받아서 확장성에 유연하게 대응
 
