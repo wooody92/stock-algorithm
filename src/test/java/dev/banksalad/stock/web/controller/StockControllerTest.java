@@ -4,7 +4,6 @@ import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;
-import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.StockFactory;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
@@ -78,13 +77,13 @@ public class StockControllerTest {
     public void viewMaxProfitTest() throws Exception {
         //given
         Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = CreateProfit.builder()
+        Profit profit = Profit.builder()
             .date(LocalDate.parse("2020-09-24"))
             .profit(108.22)
             .purchaseDate(LocalDate.parse("2020-09-23"))
             .saleDate(LocalDate.parse("2020-09-24"))
+            .stock(stock)
             .build();
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
         StockProfitResponse stockProfitResponse = StockProfitResponse.of(stock, profit);
 
         //when

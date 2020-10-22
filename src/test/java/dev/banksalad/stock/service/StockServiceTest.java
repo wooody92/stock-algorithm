@@ -6,7 +6,6 @@ import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.StockInformation;
-import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.StockFactory;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
@@ -38,13 +37,13 @@ public class StockServiceTest {
         //given
         Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
         LocalDate date = stockService.getLatestRecordDate(STOCK_SYMBOL);
-        CreateProfit createProfit = CreateProfit.builder()
+        Profit profit = Profit.builder()
             .date(date)
             .profit(108.22)
             .purchaseDate(LocalDate.parse("2020-09-23"))
             .saleDate(LocalDate.parse("2020-09-24"))
+            .stock(stock)
             .build();
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
         stock.addProfit(profit);
         stockRepository.save(stock);
 

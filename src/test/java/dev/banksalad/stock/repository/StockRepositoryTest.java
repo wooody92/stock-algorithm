@@ -4,7 +4,6 @@ import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.global.error.exception.NullProfitException;
 import dev.banksalad.stock.global.error.exception.StockApiException;
-import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.StockFactory;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,11 +28,13 @@ public class StockRepositoryTest {
     private final String NON_EXISTING = "NON_EXISTING";
     private final LocalDate EXIST_DATE = LocalDate.parse("2020-09-24");
     private final LocalDate NON_EXIST_DATE = LocalDate.parse("2020-01-01");
-    private CreateProfit initCreateProfit;
+    private Stock initStock;
+    private Profit initProfit;
 
     @Before
     public void setUp() throws Exception {
-        initCreateProfit = CreateProfit.builder()
+        initStock = StockFactory.toEntity(STOCK_SYMBOL);
+        initProfit = Profit.builder()
             .date(EXIST_DATE)
             .profit(108.22)
             .purchaseDate(LocalDate.parse("2020-09-23"))
@@ -45,7 +46,7 @@ public class StockRepositoryTest {
     @DisplayName("Stock 저장하는 테스트")
     public void saveStockTest() {
         // given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
+        Stock stock = initStock;
 
         // when
         Stock newStock = stockRepository.save(stock);
@@ -59,7 +60,7 @@ public class StockRepositoryTest {
     @DisplayName("Stock을 symbol로 조회하는 테스트")
     public void findStockBySymbolTest() {
         // given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
+        Stock stock = initStock;
         Stock newStock = stockRepository.save(stock);
 
         // when
@@ -77,9 +78,8 @@ public class StockRepositoryTest {
     @DisplayName("Stock에 Profit 추가하고 저장하는 테스트")
     public void addProfitTest() {
         // given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = initCreateProfit;
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        Stock stock = initStock;
+        Profit profit = initProfit;
 
         // when
         stock.addProfit(profit);
@@ -96,9 +96,8 @@ public class StockRepositoryTest {
     @DisplayName("Stock의 Profit 리스트에 특정 date의 Profit을 가져오는 테스트")
     public void getProfitTest() {
         // given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = initCreateProfit;
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        Stock stock = initStock;
+        Profit profit = initProfit;
 
         // when
         stock.addProfit(profit);
@@ -115,9 +114,8 @@ public class StockRepositoryTest {
     @DisplayName("Stock이 Profit 리스트에 없는 date의 Profit을 가져오는 테스트")
     public void getProfitTest_Fail() throws Exception {
         //given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = initCreateProfit;
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        Stock stock = initStock;
+        Profit profit = initProfit;
 
         //when
         stock.addProfit(profit);
@@ -131,9 +129,8 @@ public class StockRepositoryTest {
     @DisplayName("Stock의 Profit 리스트에 특정 date의 Profit이 있는지 확인하는 테스트")
     public void isExistDateOnProfitTest() throws Exception {
         //given
-        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
-        CreateProfit createProfit = initCreateProfit;
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
+        Stock stock = initStock;
+        Profit profit = initProfit;
 
         //when
         stock.addProfit(profit);
