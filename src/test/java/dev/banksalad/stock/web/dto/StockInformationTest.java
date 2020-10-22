@@ -1,10 +1,10 @@
-package dev.banksalad.stock.global.utility;
+package dev.banksalad.stock.web.dto;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
-import dev.banksalad.stock.web.dto.StockInformation;
-import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class StockAlgorithmTest {
+public class StockInformationTest {
 
     private final String STOCK_SYMBOL = "AAPL";
 
@@ -38,7 +38,7 @@ public class StockAlgorithmTest {
         List<StockInformationDto> stockInformationDtos = new ArrayList<>();
 
         // when
-        CreateProfit[] maxProfitAndDate = new CreateProfit[priceBucket.length];
+        Profit[] maxProfitAndDate = new Profit[priceBucket.length];
         for (int i = 0; i < priceBucket.length; i++) {
             for (int j = 0; j < priceBucket[i].length; j++) {
                 IexCloud iexCloud = IexCloud.builder()
@@ -49,8 +49,8 @@ public class StockAlgorithmTest {
                 stockInformationDtos.add(stockInformationDto);
             }
             StockInformation stockInformation = StockInformation.of(stockInformationDtos);
-            maxProfitAndDate[i] = StockAlgorithm.getMaxProfitAndDate(stockInformation);
-            dates.addAll(stockInformation.getDates());
+            maxProfitAndDate[i] = stockInformation.getMaxProfitAndDate();
+            dates.addAll(stockInformation.getDate());
             stockInformationDtos.clear();
         }
 
