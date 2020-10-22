@@ -5,9 +5,7 @@ import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.repository.StockRepository;
-import dev.banksalad.stock.global.utility.StockAlgorithm;
 import dev.banksalad.stock.web.dto.StockInformation;
-import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
@@ -31,16 +29,17 @@ public class StockService {
 
     @Transactional
     public StockProfitResponse getMaxProfitDate(String symbol) {
+        // DB check
         Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
         LocalDate date = getLatestRecordDate(symbol);
         if (stock.isExistDate(date)) {
             Profit profit = stock.getProfit(date);
             return StockProfitResponse.of(stock, profit);
         }
-        StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
-        CreateProfit createProfit = StockAlgorithm.getMaxProfitAndDate(stockInformation);
-        Profit profit = CreateProfit.toEntity(createProfit, stock);
 
+        // request API
+        StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
+        Profit profit = stockInformation.getMaxProfitAndDate();
         stock.addProfit(profit);
         stockRepository.save(stock);
         return StockProfitResponse.of(stock, profit);
