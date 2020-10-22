@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.*;
 import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.repository.StockRepository;
+import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
 import dev.banksalad.stock.web.dto.create.CreateStock;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -63,17 +65,22 @@ public class StockServiceTest {
     @Transactional
     @DisplayName("외부 API 요청 후 최대 수익과 날짜를 정상적으로 반환하는지 확인하는 테스트")
     public void getMaxProfitDateTest() {
-        // given, when
+        // given
         StockProfitResponse maxProfitDate = stockService.getMaxProfitDate(STOCK_SYMBOL);
+        StockInformation stockInformation = StockInformation
+            .of(stockService.getStockInformation(STOCK_SYMBOL));
+
+        // when
+        List<LocalDate> date = stockInformation.getDate();
+        LocalDate firstDate = date.get(0);
+        LocalDate lastDate = date.get(date.size() - 1);
 
         //then
         assertThat(maxProfitDate).isNotNull();
         assertThat(maxProfitDate.getSymbol()).isEqualTo(STOCK_SYMBOL);
-        assertThat(maxProfitDate.getDate())
-            .isBetween(LocalDate.now().minusDays(5), LocalDate.now());
-        assertThat(maxProfitDate.getPurchaseDate())
-            .isBetween(maxProfitDate.getDate().minusDays(180), maxProfitDate.getDate());
+        assertThat(maxProfitDate.getDate()).isEqualTo(lastDate);
+        assertThat(maxProfitDate.getPurchaseDate()).isBetween(firstDate, lastDate);
         assertThat(maxProfitDate.getSaleDate())
-            .isBetween(maxProfitDate.getPurchaseDate(), maxProfitDate.getDate());
+            .isBetween(maxProfitDate.getPurchaseDate(), lastDate);
     }
 }

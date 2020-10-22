@@ -84,4 +84,8 @@ public class StockInformation {
         }
         return dates;
     }
+
+    public List<LocalDate> getDate() {
+        return parseDate(stockInformationDtos);
+    }
 }
