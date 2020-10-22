@@ -5,7 +5,7 @@ import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.StockInformation;
-import dev.banksalad.stock.web.dto.create.CreateStock;
+import dev.banksalad.stock.web.dto.create.StockFactory;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ public class StockService {
     @Transactional
     public StockProfitResponse getMaxProfitDate(String symbol) {
         // DB check
-        Stock stock = stockRepository.findBySymbol(symbol).orElse(CreateStock.toEntity(symbol));
+        Stock stock = stockRepository.findBySymbol(symbol).orElse(StockFactory.toEntity(symbol));
         LocalDate date = getLatestRecordDate(symbol);
         if (stock.isExistDate(date)) {
             Profit profit = stock.getProfit(date);

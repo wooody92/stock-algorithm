@@ -10,12 +10,12 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateStock {
+public class StockFactory {
 
     private String symbol;
 
     @Builder
-    public CreateStock(String symbol) {
+    public StockFactory(String symbol) {
         this.symbol = symbol;
     }
 

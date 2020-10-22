@@ -1,6 +1,5 @@
 package dev.banksalad.stock.service;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
 
 import dev.banksalad.stock.domain.profit.Profit;
@@ -8,7 +7,7 @@ import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
-import dev.banksalad.stock.web.dto.create.CreateStock;
+import dev.banksalad.stock.web.dto.create.StockFactory;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -37,7 +36,7 @@ public class StockServiceTest {
     @DisplayName("이미 요청했던 날짜와 심볼을 다시 요청했을 때 DB에 기록된 데이터로 반환하는지 확인하는 테스트")
     public void getMaxProfitDateTest_DB() {
         //given
-        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
         LocalDate date = stockService.getLatestRecordDate(STOCK_SYMBOL);
         CreateProfit createProfit = CreateProfit.builder()
             .date(date)

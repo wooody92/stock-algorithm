@@ -5,7 +5,7 @@ import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;
 import dev.banksalad.stock.web.dto.create.CreateProfit;
-import dev.banksalad.stock.web.dto.create.CreateStock;
+import dev.banksalad.stock.web.dto.create.StockFactory;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import dev.banksalad.stock.web.dto.response.StockProfitResponse;
 import java.time.LocalDate;
@@ -77,7 +77,7 @@ public class StockControllerTest {
     @DisplayName("주식 정보를 바탕으로 최대 수익을 내는 날짜 정보를 조회하는 테스트")
     public void viewMaxProfitTest() throws Exception {
         //given
-        Stock stock = CreateStock.toEntity(STOCK_SYMBOL);
+        Stock stock = StockFactory.toEntity(STOCK_SYMBOL);
         CreateProfit createProfit = CreateProfit.builder()
             .date(LocalDate.parse("2020-09-24"))
             .profit(108.22)
