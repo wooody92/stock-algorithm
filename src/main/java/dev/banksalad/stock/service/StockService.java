@@ -3,7 +3,6 @@ package dev.banksalad.stock.service;
 import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.OpenApiProvider;
-import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.StockInformation;
 import dev.banksalad.stock.web.dto.create.CreateStock;
@@ -46,8 +45,7 @@ public class StockService {
     }
 
     public List<StockInformationDto> getStockInformation(String symbol) {
-        List<IexCloud> iexClouds = openApiProvider.requestData(symbol);
-        return openApiProvider.getStockData(symbol, iexClouds);
+        return openApiProvider.getStockData(symbol, openApiProvider.requestData(symbol));
     }
 
     public LocalDate getLatestRecordDate(String symbol) {
