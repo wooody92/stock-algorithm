@@ -209,6 +209,8 @@
    - 각각의 Exception이 RuntimeException을 상속받는 구조가 아니고 StockApiException으로 한번더 Wrapping하여 계층화 구조 설계
    - 예상치 못한 에러를 런타임 에러보다 커스텀 에러로 던지기 위한 안전장치
 
+   <img width="817" alt="exception" src="https://user-images.githubusercontent.com/58318041/96691204-91c1a380-13bf-11eb-93e8-8805097f12cd.png">
+
    ```java
    public class StockApiException extends RuntimeException {
    
@@ -251,6 +253,8 @@
 4. 서비스 계층에서 구체화한 IexCloudProvider 클래스를 주입받기 보다는 OpenApiProvider 인터페이스의 의존성을 주입 받아서 확장성에 유연하게 대응
 
    - SOLID - DIP(Dependency Inversion Principle) : 의존성 역전의 원칙에 의거 리팩토링
+
+     <img width="601" alt="dip" src="https://user-images.githubusercontent.com/58318041/96689374-46a69100-13bd-11eb-8239-2af08fef0910.png">
 
    - 두 개 이상의 구현체가 있는 인터페이스 의존성 주입
 
@@ -304,7 +308,17 @@
 
    - `List<StockInformationDto>`를 필드 값으로 갖는 StockInformation 클래스 생성
 
-   - 객체지향 : 서비스 계층에서 사용하던 parsePrice(), parseDate() 메서드를 StockInformation 클래스에서 처리
+   - 객체지향 - 캡슐화
+
+     - 최대 수익을 구하는 메서드의 매개변수를 일급컬렉션으로 캡슐화하여 객체의 상태와 행동을 하나의 클래스에서 관리하여 안정성 향상
+     - 서비스 계층에서 사용하던 parsePrice(), parseDate() 메서드를 StockInformation 클래스에서 처리
+
+     ```java
+     // before
+     getMaxProfitAndDate(List<Double> price, List<LocalDate> dates)
+     // after
+     getMaxProfitAndDate(StockInformation stockInformation)
+     ```
 
      ```java
      // before
@@ -348,16 +362,9 @@
      }
      ```
 
-   - 캡슐화 : 최대 수익을 구하는 메서드의 매개변수를 일급컬렉션으로 캡슐화하여 안정성 향상
-
-     ```java
-     // before
-     getMaxProfitAndDate(List<Double> price, List<LocalDate> dates)
-     // after
-     getMaxProfitAndDate(StockInformation stockInformation)
-     ```
-
 7. 리팩토링으로 인한 StockAlgorithm - getMaxProfitAndDateTest 메서드 매개변수 수정 후 테스트 커버리지 확인
 
    <img width="1220" alt="banksalad test" src="https://user-images.githubusercontent.com/58318041/95952802-bc49b480-0e33-11eb-8245-2ee12812cd74.png">
+
+
 
