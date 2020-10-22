@@ -1,6 +1,6 @@
 package dev.banksalad.stock.web.dto.response;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import java.time.LocalDate;
 import lombok.AccessLevel;

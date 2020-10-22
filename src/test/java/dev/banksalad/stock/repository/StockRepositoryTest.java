@@ -1,6 +1,6 @@
 package dev.banksalad.stock.repository;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.global.error.exception.NullProfitException;
 import dev.banksalad.stock.global.error.exception.StockApiException;

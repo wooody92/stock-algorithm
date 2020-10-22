@@ -2,7 +2,7 @@ package dev.banksalad.stock.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.repository.StockRepository;
 import dev.banksalad.stock.web.dto.StockInformation;

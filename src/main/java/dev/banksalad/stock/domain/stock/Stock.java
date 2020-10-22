@@ -1,6 +1,5 @@
 package dev.banksalad.stock.domain.stock;
 
-import dev.banksalad.stock.domain.profit.Profit;
 import dev.banksalad.stock.global.error.exception.NullProfitException;
 import java.time.LocalDate;
 import java.util.ArrayList;

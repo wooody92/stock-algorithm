@@ -1,4 +1,4 @@
-package dev.banksalad.stock.domain.profit;
+package dev.banksalad.stock.domain.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.banksalad.stock.domain.stock.Stock;

@@ -1,6 +1,6 @@
 package dev.banksalad.stock.web.dto;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.text.DecimalFormat;
 import java.time.LocalDate;

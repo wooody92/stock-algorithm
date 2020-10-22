@@ -1,6 +1,6 @@
 package dev.banksalad.stock.service;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.OpenApiProvider;
 import dev.banksalad.stock.repository.StockRepository;

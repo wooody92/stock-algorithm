@@ -1,6 +1,6 @@
 package dev.banksalad.stock.web.controller;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.domain.stock.Stock;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.service.StockService;

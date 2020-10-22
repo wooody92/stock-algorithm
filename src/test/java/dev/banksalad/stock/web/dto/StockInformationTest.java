@@ -1,9 +1,8 @@
 package dev.banksalad.stock.web.dto;
 
-import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import dev.banksalad.stock.domain.profit.Profit;
+import dev.banksalad.stock.domain.stock.Profit;
 import dev.banksalad.stock.openApi.iextrading.IexCloud;
 import dev.banksalad.stock.web.dto.response.StockInformationDto;
 import java.time.LocalDate;
