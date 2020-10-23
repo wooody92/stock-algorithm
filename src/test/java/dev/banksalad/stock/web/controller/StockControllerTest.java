@@ -23,7 +23,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.is;
 
 
 @RunWith(SpringRunner.class)
@@ -69,6 +71,12 @@ public class StockControllerTest {
         mockMvc.perform(get("/stock/" + STOCK_SYMBOL + "/chart"))
             .andExpect(status().isOk())
             .andDo(print())
+            .andExpect(jsonPath("$[0].open").value(stockInformation.get(0).getOpen()))
+            .andExpect(jsonPath("$[0].close").value(stockInformation.get(0).getClose()))
+            .andExpect(jsonPath("$[0].high").value(stockInformation.get(0).getHigh()))
+            .andExpect(jsonPath("$[0].low").value(stockInformation.get(0).getLow()))
+            .andExpect(jsonPath("$[0].volume").value(stockInformation.get(0).getVolume()))
+            .andExpect(jsonPath("$[1].close").value(stockInformation.get(1).getClose()))
             .andExpect(content().json(stockInformation.toString()));
     }
 
