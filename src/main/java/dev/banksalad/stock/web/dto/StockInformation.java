@@ -66,7 +66,7 @@ public class StockInformation {
     }
 
     private Double getSecondDigit(Double digit) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         String format = decimalFormat.format(digit);
         return Double.parseDouble(format);
     }
@@ -87,5 +87,9 @@ public class StockInformation {
 
     public List<LocalDate> getDate() {
         return parseDate(stockInformationDtos);
+    }
+
+    public List<Double> getPrice() {
+        return parsePrice(stockInformationDtos);
     }
 }
