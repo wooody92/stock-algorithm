@@ -103,32 +103,45 @@
 ### 설계 과정에서 고민하고 고려했던 사항들
 
 1. 주식 정보를 얻기 위한 외부 API 요청에 `RestTemplate`과 `WebClient` 어느 것을 사용하는게 좋을까?
+
    - 둘의 가장 큰 차이점은 동기 방식과 비동기 방식으로 나뉜다.
    - 대부분의 기능에서 `WebClient`가 유용하고, 스프링에서도 `WebClient` 사용을 권장하고 있다.
    - `WebClient`는 이전에 사용해본 경험이 없어 좋은 기회로 생각하고 `WebClient`를 학습하고 사용했다.
    - 프로젝트에서 사용한 메서드는 단일 요청으로 비동기 처리가 필요하지 않아 `block()`으로 동기처리 하였다. 
    - [RestTemplate과 WebClient 학습정리](https://wooody92.github.io/spring%20boot/Spring-Boot-Spring-REST-Client/)
+
 2. DB를 사용해야 할까?
+
    - 프로젝트 요구사항을 해결만을 위해서는 DB 사용을 하지 않아도 무방하다.
    - 더 좋은 방식으로 리소스 비용을 아낄 수 있는 방법은 없을까?
    - 요청 받은 주식의 `symbol`과 날짜의 최대 수익 정보를 DB에 저장한다.
    - 다음 요청 시 동일한 `symbol`과 날짜를 요청하면 DB의 데이터로 응답한다.
      - 이를 통해 같은 요청에 대해서 불필요한 외부 API 요청과 최대 수익을 구하는 알고리즘 로직의 리소스 낭비를 줄인다.
    - DB의 경우 프로젝트 과제이기 때문에 인메모리 DB로 H2를 사용했다.
+
 3. 확장성 있는 구조로 설계하자
+
    - Entity의 경우 Stock과 Profit을 분리하여 1 : N 관계로 설계하였다.
      - Stock은 주식의 `symbol` 을 갖는다.
      - Profit은 최대 수익 알고리즘을 통해 얻은 날짜, 최대수익, 매수일, 매도일(`date`, `profit`, `purchaseDate`, `saleDate`)을 필드값으로 갖는다.
    - 3rd party API 소스를 변경에 용의하도록 설계하였다.
      - `OpenApiProvider` 인터페이스를 생성하고, 상속구조로 `IexCloudProvider`를 구현했다.
      - 외부 API 소스를 변경해도 메인 로직은 수정을 최대한 하지 않는 방향으로 코드를 작성하였다.
+
 4. WebClient로 외부 API 로직을 처리하는 클래스는 DDD에서 어느 계층 구조에 가까울까?
+
    - 굳이 따지자면 Serviece 계층에 가까운 것 같다.
+
    - 하지만 의미상 모호한 점이 있어 `Provider`로 이름을 명명하고 따로 패키지화 하여 관리했다.
+
+     <img width="212" alt="package" src="https://user-images.githubusercontent.com/58318041/97136935-d9697600-1797-11eb-9793-5532740b1d3b.png">
+
 5. 최대 수익을 구하는 알고리즘의 O(n)의 시간복잡도로 구현하자
+
    - 주식 가격과 날짜 정보를 입력받아 최대 수익과 매수매도 날짜를 구하도록 구현했다.
    - 주식 가격이 변동이 없거나 계속 하락하면 최대 수익은 0이고, 매수 매도일은 입력된 기간의 첫째 날이다.
    - 알고리즘과 같은 유틸성 클래스는 어느 패키지에 넣어야 할까 고민했다.
+
 6. 나중에 읽어도 편하게 읽히는 클린 코드 및 객체 지향적 설계를 지향하자
 
 <br>
@@ -180,9 +193,13 @@
 
 ## # 코드 개선
 
-### 1. Java Steam API를 사용
+> 제출했던 과제를 다시 읽어보면서 객체의 네이밍나 객체 지향적이지 않은 구조의 문제로 가독성이 떨어지는 부분이 있는 것을 느끼고 리팩토링을 진행하게 되었다.
 
-**리팩토링**
+<br>
+
+## 1. Java Steam API를 사용
+
+### 리팩토링
 
 - 전
 
@@ -214,15 +231,15 @@
   }
   ```
 
-**결과**
+### 결과
 
 - 체이닝 메서드 방식으로 코드 가독성과 직관성 향상
 
-  
+<br>
 
-### 2. StockApiException 상위 클래스를 생성하여 상속구조로 패키징화
+## 2. StockApiException 상위 클래스를 생성하여 상속구조로 패키징화
 
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -246,7 +263,7 @@
   }
   ```
 
-**결과**
+### 결과
 
 - StockApiException으로 계층적 구조 설계
 
@@ -254,18 +271,18 @@
 
   ![exception2](https://user-images.githubusercontent.com/58318041/96897621-c02ba580-14c9-11eb-93b6-c6ab65a5c810.png)
 
+<br>
 
+## 3. SOLID 원칙에 의거한 의존관계 주입 리팩토링
 
-### 3. SOLID 원칙에 의거한 의존관계 주입 리팩토링
-
-**개요**
+### 개요
 
 - OCP(Open-Closed Principle) 개방 폐쇄 원칙
   - 확장에는 열려있고 변경에는 닫힌 구조
 - DIP(Dependency Inversion Principle) 의존 역전 원칙
   - 의존관계 주입 시 구체 클래스보다 상위 클래스 또는 인터페이스와 관계를 맺는 구조
 
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -287,7 +304,7 @@
   private final OpenApiProvider openApiProvider;
   ```
 
-**결과**
+### 결과
 
 - 상위 인터페이스의 의존관계를 주입하여 확장성있는 구조로 변경
 
@@ -295,11 +312,11 @@
 
   ![dip2](https://user-images.githubusercontent.com/58318041/96897398-835fae80-14c9-11eb-9fad-e9d4f98c6d12.png)
 
+<br>
 
+## 4. Repository - Optional 사용
 
-### 4. Repository - Optional 사용
-
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -324,19 +341,19 @@
   LocalDate date = getLatestRecordDate(symbol);
   ```
 
-**결과**
+### 결과
 
 - 로직 간소화로 코드 가독성과 직관성 향상
 
+<br>
 
+## 5. 일급 컬렉션 사용 - 1
 
-### 5. 일급 컬렉션 사용 - 1
-
-**개요**
+### 개요
 
 - `List<StockInformationDto>`를 단일 필드 값으로 갖는 StockInformation 일급 컬렉션 클래스 생성
 
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -366,65 +383,65 @@
   getMaxProfitAndDate(StockInformation stockInformation)
   ```
 
-**결과**
+### 결과
 
 - StockInformation 객체의 상태(필드)와 행위(메서드)을 하나의 클래스에서 관리하여 결합도를 낮추고 응집도 향상
 - 객체지향 - 캡슐화에 어울리도록 설계
 
+<br>
 
+## 6. 일급 컬렉션 사용 - 2
 
-### 6. 일급 컬렉션 사용 - 2
-
-**개요**
+### 개요
 
 - 기존에 global/utility 패키지의 StockAlgorithm 클래스 제거
 - StockInformation 클래스에 최대 수익 알고리즘 메서드 로직을  추가
 
-**리팩토링**
+### 리팩토링
 
 - 전
-  
+
   - getMaxProfitAndDate : StockAlgorithm 클래스에서 static 메서드로 필요한 데이터를 매개변수를 받아 사용
-  
+
   ```java
   StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
   Profit profit = StockAlgorithm.getMaxProfitAndDate(stockInformation);
   ```
-  
+
 - 후
-  
+
   - getMaxProfitAndDate : 필요한 데이터(price, date)를 상태(필드)값으로 갖고있는 StockInformation 클래스에서 메서드로 사용
-  
+
   ```java
   StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
   Profit profit = stockInformation.getMaxProfitAndDate();
   ```
 
-**결과**
+### 결과
 
 - 객체의 상태(필드)와 행위(메서드)을 하나의 클래스에서 관리하여 결합도를 낮추고 응집도 향상
 - 객체지향적 설계 - 캡슐화
 
+<br>
 
+## 7. Stock 엔티티를 생성을 관리하는 DTO 네이밍 변경
 
-### 7. Stock 엔티티를 생성을 관리하는 DTO 네이밍 변경
-
-**리팩토링**
+### 리팩토링
 
 - 전
   - CreateStock
 - 후
   - StockFactory
 
-**결과**
+### 결과
 
 - Stock 엔티티 생성을 관리하는 DTO의 의미에 맞도록 네이밍 변경하여 직관성 향상
 
+<br>
 
+## 8. Profit 엔티티 생성을 관리하는 CreateProfit DTO 제거
 
-### 8. Profit 엔티티 생성을 관리하는 CreateProfit DTO 제거
-
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -441,16 +458,16 @@
   Profit profit = stockInformation.getMaxProfitAndDate();
   ```
 
-**결과**
+### 결과
 
 - 엔티티 변경을 최소화하고 엔티티 생성을 한곳에서 관리하려고 CreateProfit DTO로 관리하였으나 코드 복잡도로 인해 제거
 - 코드 복잡도를 낮추어 가독성 향상
 
+<br>
 
+## 9. 테스트 : 최대 수익 알고리즘을 검증하는 테스트 개선
 
-### #9. 테스트 : 최대 수익 알고리즘을 검증하는 테스트 개선
-
-**리팩토링**
+### 리팩토링
 
 - 전
 
@@ -556,31 +573,31 @@
   }
   ```
 
-**결과**
+### 결과
 
 - 테스트를 위한 데이터의 양과 테스트 케이스 횟수의 비약적인 상승으로 테스트 신뢰도 상승
 - 서로 다른 알고리즘을 비교하는 방식을 채택하여, 비즈니스 로직에서 사용되는 알고리즘의 정확도 검증
 
+<br>
 
+## 10. 추가로 고려해볼 만한 부분
 
-### 10. 고려해볼만한 부분
-
-**개요**
+### 개요
 
 - IexCloud 거래소에서는 특정 입력 날짜 기준으로 이전 180일 데이터 조회 기능을 제공하지 않는다.
 - 만약 타 거래소에서 특정 날짜 기준으로 이전 데이터를 조회할 수 있는 기능이 제공된다면?
 
-**기대**
+### 기대
 
 - API 엔드포인트에 `/stock/{symbol}?date=2020-10-10`와 같이 query parameter를 이용하여 특정 날짜 기준으로 이전 180일을 조회하는 방식으로 구현 (날짜 미입력 시 default는 어제)
 - 컨트롤러 단에서 캐시를 이용하여 동일한 요청에 대해서는 리소스 낭비를 줄일 수 있겠다.
   - `@Cacheable`, `@EnableCaching`
 
+<br>
 
+## 11. 결론
 
-### 11. 결론
-
-**결과**
+### 결과
 
 - 코드가 한결 객체 지향적 구조를 갖게 되었고, 자연스럽게 기존 코드에 비해 가독성이 향상되었다.
 
@@ -632,12 +649,12 @@
 
   <img width="1231" alt="code-coverage" src="https://user-images.githubusercontent.com/58318041/96909993-c3c72880-14d9-11eb-99b0-daea44fa7787.png">
 
+<br>
 
+## # 회고
 
-### # 회고
-
-- 제출했던 과제를 다시 읽어보면서 객체의 네이밍나 객체 지향적이지 않은 구조의 문제로 가독성이 떨어지는 부분이 있는 것을 느끼고 리팩토링을 진행하게 되었다.
 - 과제와 면접을 준비하면서 당연하게 사용하던 기술들에 대해 왜? 라는 의문을 갖고 이해할 수 있어서 좋았다.
+  - [왜 이러한 기술을 사용했는지 살펴보기](https://gist.github.com/wooody92/fe2059ecaa687817dd3e738050c3c49b)
 - 기존에 이론으로만 이해하고 있던 지식들에 대해 한번 더 생각하고 코드에 적용해 볼 수 있어서 개발자로서 많이 배우고 성장하게 된 경험이었다.
   - 객체지향 구조, SOLID 원칙, 일급컬렉션, 확장성있는 설계 등
 
