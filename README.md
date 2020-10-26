@@ -383,9 +383,22 @@
 **리팩토링**
 
 - 전
+  
   - getMaxProfitAndDate : StockAlgorithm 클래스에서 static 메서드로 필요한 데이터를 매개변수를 받아 사용
+  
+  ```java
+  StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
+  Profit profit = StockAlgorithm.getMaxProfitAndDate(stockInformation);
+  ```
+  
 - 후
+  
   - getMaxProfitAndDate : 필요한 데이터(price, date)를 상태(필드)값으로 갖고있는 StockInformation 클래스에서 메서드로 사용
+  
+  ```java
+  StockInformation stockInformation = StockInformation.of(getStockInformation(symbol));
+  Profit profit = stockInformation.getMaxProfitAndDate();
+  ```
 
 **결과**
 
