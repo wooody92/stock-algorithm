@@ -6,6 +6,16 @@
 
 <br>
 
+## # 목차
+
+- [프로젝트 소개](https://github.com/wooody92/stock-program#-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C)
+- [학습내용 정리](https://github.com/wooody92/stock-program#-%ED%95%99%EC%8A%B5-%EB%82%B4%EC%9A%A9)
+- [리팩토링 활동](https://github.com/wooody92/stock-program#-%EC%BD%94%EB%93%9C-%EA%B0%9C%EC%84%A0)
+- [회고](https://github.com/wooody92/stock-program#-%ED%9A%8C%EA%B3%A0)
+- [별첨 - 왜 이러한 기술을 사용했는가](https://gist.github.com/wooody92/fe2059ecaa687817dd3e738050c3c49b)
+
+
+
 ## # 프로젝트 소개
 
 ### Project FlowChart
